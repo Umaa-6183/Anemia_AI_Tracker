@@ -1,0 +1,154 @@
+version: "3.9"
+
+# ════════════════════════════════════════════════════════
+# Anemia AI Tracker — Full Stack Docker Compose
+#
+# Services:
+#   frontend  — React (Nginx)        port 3000
+#   backend   — FastAPI (Uvicorn)    port 8000
+#   db        — PostgreSQL 15        port 5432 (internal)
+#   pgadmin   — DB admin UI          port 5050 (optional)
+#
+# Usage:
+#   cp .env.example .env           # fill in secrets
+#   docker compose up --build      # first run
+#   docker compose up -d           # subsequent runs
+#   docker compose down -v         # stop + remove volumes
+# ════════════════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL database ──────────────────────────────
+  db:
+    image: postgres:15-alpine
+    container_name: anemia_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-anemia_tracker}
+      POSTGRES_USER:     ${POSTGRES_USER:-anemia_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-anemia_user} -d ${POSTGRES_DB:-anemia_tracker}"]
+      interval: 10s
+      timeout:  5s
+      retries:  5
+    networks:
+      - anemia_net
+    # Do NOT expose 5432 externally in production
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  # ── FastAPI backend ──────────────────────────────────
+  backend:
+    build:
+      context:    ./backend
+      dockerfile: Dockerfile
+      target:     runtime
+    container_name: anemia_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL:   postgresql://${POSTGRES_USER:-anemia_user}:${POSTGRES_PASSWORD:-changeme_in_production}@db:5432/${POSTGRES_DB:-anemia_tracker}
+      SECRET_KEY:     ${SECRET_KEY:-CHANGE_ME_IN_PRODUCTION}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://frontend:80}
+      DEBUG:          ${DEBUG:-false}
+      ENVIRONMENT:    ${ENVIRONMENT:-production}
+      LOG_LEVEL:      ${LOG_LEVEL:-INFO}
+      MODEL_PATH:     /app/models/saved/hb_cnn_model.h5
+    volumes:
+      # Persist trained model and logs across container restarts
+      - model_data:/app/models/saved
+      - log_data:/app/logs
+      - report_tmp:/app/tmp/reports
+      # Mount training data directory (bind mount for easy updates)
+      - ${TRAINING_DATA_DIR:-./backend/data}:/app/data
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout:  10s
+      start_period: 60s
+      retries:  3
+    networks:
+      - anemia_net
+    # Resource limits — TF inference is memory-hungry
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 1G
+
+  # ── React frontend (Nginx) ───────────────────────────
+  frontend:
+    build:
+      context:    ./frontend
+      dockerfile: Dockerfile
+      target:     runtime
+    container_name: anemia_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      REACT_APP_API_URL: ""   # empty = same origin (proxied via nginx)
+    ports:
+      - "3000:80"
+    networks:
+      - anemia_net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: 30s
+      timeout:  5s
+      retries:  3
+
+  # ── pgAdmin (optional — comment out in production) ───
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: anemia_pgadmin
+    restart: unless-stopped
+    profiles: ["dev"]   # only starts with: docker compose --profile dev up
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_EMAIL:-admin@local.dev}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - anemia_net
+
+
+# ════════════════════════════════════════════════════════
+# VOLUMES
+# ════════════════════════════════════════════════════════
+volumes:
+  postgres_data:
+    driver: local
+  model_data:
+    driver: local
+  log_data:
+    driver: local
+  report_tmp:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+
+# ════════════════════════════════════════════════════════
+# NETWORKS
+# ════════════════════════════════════════════════════════
+networks:
+  anemia_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

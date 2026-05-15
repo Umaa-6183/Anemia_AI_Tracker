@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#082849" />
+    <meta name="description"
+        content="Anemia AI Tracker — Non-invasive Haemoglobin estimation from conjunctival imaging. AI-powered anaemia screening in under 60 seconds." />
+    <meta name="keywords" content="anemia, haemoglobin, AI, conjunctiva, screening, non-invasive" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Anemia AI Tracker" />
+    <meta property="og:description" content="Non-invasive AI-powered Haemoglobin estimation" />
+    <meta property="og:type" content="website" />
+
+    <!-- Apple PWA -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Google Fonts preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <title>Anemia AI Tracker</title>
+
+    <style>
+        /* Critical inline CSS — prevents flash of unstyled content */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #020617;
+            color: #f1f5f9;
+            font-family: Inter, system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #root {
+            min-height: 100dvh;
+        }
+
+        /* Initial loading spinner shown before React hydrates */
+        #initial-loader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #020617;
+            z-index: 9999;
+            gap: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        #initial-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-ring {
+            width: 44px;
+            height: 44px;
+            border: 3px solid #1e3a5f;
+            border-top-color: #0e8ee7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-text {
+            font-size: 13px;
+            color: #475569;
+            font-family: Inter, sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .loader-brand {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e2e8f0;
+            font-family: Inter, sans-serif;
+            letter-spacing: -0.02em;
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>
+        <div style="padding:40px;text-align:center;background:#020617;color:#f1f5f9;font-family:sans-serif;">
+            <h1>JavaScript Required</h1>
+            <p>Anemia AI Tracker requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+        </div>
+    </noscript>
+
+    <!-- Initial loader — hidden once React mounts -->
+    <div id="initial-loader">
+        <div class="loader-brand">🩸 Anemia AI Tracker</div>
+        <div class="loader-ring"></div>
+        <div class="loader-text">Loading application…</div>
+    </div>
+
+    <!-- React root -->
+    <div id="root"></div>
+
+    <!-- Hide loader once React has rendered -->
+    <script>
+        (function () {
+            var observer = new MutationObserver(function () {
+                var root = document.getElementById('root');
+                var loader = document.getElementById('initial-loader');
+                if (root && root.children.length > 0 && loader) {
+                    loader.classList.add('hidden');
+                    setTimeout(function () {
+                        loader.remove();
+                    }, 350);
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.getElementById('root'), {
+                childList: true,
+                subtree: true
+            });
+            // Fallback: remove after 5 s regardless
+            setTimeout(function () {
+                var loader = document.getElementById('initial-loader');
+                if (loader) loader.remove();
+            }, 5000);
+        })();
+    </script>
+</body>
+
+</html>

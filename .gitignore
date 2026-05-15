@@ -1,0 +1,75 @@
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.*.local
+
+# Example env file (KEEP THIS IF YOU WANT TEMPLATE SHARING)
+# .env.example
+
+# =========================
+# Python
+# =========================
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# =========================
+# Node.js
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# Build Folders
+# =========================
+build/
+dist/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# IDE Files
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Data / Models
+# =========================
+data/
+datasets/
+models/
+checkpoints/
+uploads/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Coverage / Testing
+# =========================
+.coverage
+pytest_cache/
+
+# =========================
+# Docker
+# =========================
+docker-data/
