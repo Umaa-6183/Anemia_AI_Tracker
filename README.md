@@ -1,4 +1,4 @@
-# 🩸 Anemia AI Tracker
+# Anemia AI Tracker
 
 > **Non-invasive, AI-powered Haemoglobin estimation from conjunctival images — under 60 seconds, end-to-end.**
 
@@ -6,22 +6,37 @@ A final-year project web application that estimates Haemoglobin (Hb) levels by a
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Architecture Overview](#architecture-overview)
-- [Project Structure](#project-structure)
-- [Quick Start (Docker)](#quick-start-docker)
-- [Manual Setup](#manual-setup)
-  - [Backend](#backend-setup)
-  - [Frontend](#frontend-setup)
-- [Training the Model](#training-the-model)
-- [API Reference](#api-reference)
-- [Clinical Design Decisions](#clinical-design-decisions)
-- [Tech Stack](#tech-stack)
+- [Anemia AI Tracker](#anemia-ai-tracker)
+  - [Table of Contents](#table-of-contents)
+  - [Architecture Overview](#architecture-overview)
+  - [Project Structure](#project-structure)
+  - [Quick Start (Docker)](#quick-start-docker)
+    - [Prerequisites](#prerequisites)
+  - [Manual Setup](#manual-setup)
+    - [Backend Setup](#backend-setup)
+    - [Frontend Setup](#frontend-setup)
+  - [Training the Model](#training-the-model)
+    - [Option A — Synthetic data (pipeline test, no real images needed)](#option-a--synthetic-data-pipeline-test-no-real-images-needed)
+    - [Option B — Real conjunctival image dataset](#option-b--real-conjunctival-image-dataset)
+    - [Training pipeline stages](#training-pipeline-stages)
+    - [Output files after training](#output-files-after-training)
+    - [Restart backend after training](#restart-backend-after-training)
+  - [API Reference](#api-reference)
+    - [Health](#health)
+    - [Inference](#inference)
+    - [Labs](#labs)
+    - [Report](#report)
+  - [Clinical Design Decisions](#clinical-design-decisions)
+    - [WHO Hb Thresholds (applied by `classifySeverity()`)](#who-hb-thresholds-applied-by-classifyseverity)
+    - [Model Architecture](#model-architecture)
+    - [Disclaimer](#disclaimer)
+  - [Tech Stack](#tech-stack)
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -55,7 +70,7 @@ A final-year project web application that estimates Haemoglobin (Hb) levels by a
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 anemia-tracker/
@@ -119,7 +134,7 @@ anemia-tracker/
 
 ---
 
-## 🚀 Quick Start (Docker)
+##  Quick Start (Docker)
 
 ### Prerequisites
 - Docker Desktop ≥ 24 or Docker Engine + Compose v2
@@ -151,7 +166,7 @@ docker compose --profile dev up
 
 ---
 
-## 🛠 Manual Setup
+## Manual Setup
 
 ### Backend Setup
 
@@ -193,7 +208,7 @@ npm start
 
 ---
 
-## 🧠 Training the Model
+##  Training the Model
 
 ### Option A — Synthetic data (pipeline test, no real images needed)
 
@@ -271,7 +286,7 @@ pkill -f uvicorn && uvicorn main:app --reload
 
 ---
 
-## 📡 API Reference
+##  API Reference
 
 ### Health
 
@@ -334,7 +349,7 @@ pkill -f uvicorn && uvicorn main:app --reload
 
 ---
 
-## 🏥 Clinical Design Decisions
+## Clinical Design Decisions
 
 ### WHO Hb Thresholds (applied by `classifySeverity()`)
 
@@ -372,7 +387,7 @@ Loss: Huber(δ=1.0)   Optimizer: Adam   Metric: MAE (g/dL)
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer              | Technology                 |
 | ------------------ | -------------------------- |
