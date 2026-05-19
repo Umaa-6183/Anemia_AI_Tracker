@@ -13,105 +13,150 @@ import {
 import { useApp } from "../context/AppContext";
 import remediesData from "../data/remedies.json";
 
-/* ─── Severity colour map ───────────────────────────── */
-const SEVERITY_THEME = {
+/* ── Severity themes (white-background safe) ────── */
+const SEV_THEME = {
     normal: {
-        border: "border-green-800/60",
-        bg: "bg-green-900/20",
-        icon: "text-green-400",
-        badge: "bg-green-900/40 text-green-300 border-green-800",
+        border: "#86EFAC",
+        bg: "#F0FDF4",
+        iconColor: "#16A34A",
+        headingColor: "#15803D",
+        badgeBg: "#DCFCE7",
+        badgeText: "#14532D",
+        badgeBorder: "#86EFAC",
     },
     mild: {
-        border: "border-yellow-800/60",
-        bg: "bg-yellow-900/20",
-        icon: "text-yellow-400",
-        badge: "bg-yellow-900/40 text-yellow-300 border-yellow-800",
+        border: "#FDE68A",
+        bg: "#FFFBEB",
+        iconColor: "#D97706",
+        headingColor: "#92400E",
+        badgeBg: "#FEF3C7",
+        badgeText: "#78350F",
+        badgeBorder: "#FDE68A",
     },
     moderate: {
-        border: "border-orange-800/60",
-        bg: "bg-orange-900/20",
-        icon: "text-orange-400",
-        badge: "bg-orange-900/40 text-orange-300 border-orange-800",
+        border: "#FDBA74",
+        bg: "#FFF7ED",
+        iconColor: "#EA580C",
+        headingColor: "#9A3412",
+        badgeBg: "#FFEDD5",
+        badgeText: "#7C2D12",
+        badgeBorder: "#FDBA74",
     },
     severe: {
-        border: "border-red-800/60",
-        bg: "bg-red-900/20",
-        icon: "text-red-400",
-        badge: "bg-red-900/40 text-red-300 border-red-800",
+        border: "#FCA5A5",
+        bg: "#FEF2F2",
+        iconColor: "#DC2626",
+        headingColor: "#991B1B",
+        badgeBg: "#FEE2E2",
+        badgeText: "#7F1D1D",
+        badgeBorder: "#FCA5A5",
     },
 };
 
-/* ─── Single tip card ───────────────────────────────── */
+/* Strip ALL emoji and non-printable characters */
+function stripEmoji(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/[\u{1F000}-\u{1FFFF}]/gu, "")
+        .replace(/[\u{2600}-\u{27BF}]/gu, "")
+        .replace(/[\u{FE00}-\u{FEFF}]/gu, "")
+        .replace(/[^\x20-\x7E\u00C0-\u024F]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+/* ── Single expandable tip card ─────────────────── */
 function TipCard({ tip, index }) {
-    const [expanded, setExpanded] = useState(false);
+    const [open, setOpen] = useState(false);
+    const cleanTitle = stripEmoji(tip.title);
 
     return (
         <div
-            className="border border-slate-700 rounded-xl overflow-hidden
-                    hover:border-slate-600 transition-all duration-150"
+            className="rounded-xl overflow-hidden transition-all duration-150"
+            style={{ border: "1.5px solid #E2E8F0" }}
         >
             <button
                 type="button"
-                onClick={() => setExpanded((v) => !v)}
-                className="w-full flex items-start gap-3 px-4 py-3.5 text-left
-                   bg-slate-800/40 hover:bg-slate-800/60 transition-colors"
+                onClick={() => setOpen((v) => !v)}
+                className="w-full flex items-start gap-3 px-4 py-3.5 text-left transition-colors"
+                style={{ background: open ? "#F8FAFC" : "#FFFFFF" }}
             >
-                {/* Emoji icon */}
-                <span className="text-xl flex-shrink-0 leading-none mt-0.5">
-                    {tip.icon}
+                {/* Number badge */}
+                <span
+                    className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5"
+                    style={{
+                        background: "#EFF6FF",
+                        color: "#2563EB",
+                        border: "1.5px solid #BFDBFE",
+                    }}
+                >
+                    {index + 1}
                 </span>
 
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-semibold text-slate-200 leading-snug">
-                            {tip.title}
+                    <p className="text-sm font-bold" style={{ color: "#0F172A" }}>
+                        {cleanTitle}
+                    </p>
+                    {!open && (
+                        <p
+                            className="text-xs mt-0.5"
+                            style={{
+                                color: "#94A3B8",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            {stripEmoji(tip.detail)}
                         </p>
-                        <div className="flex items-center gap-1.5 flex-shrink-0">
-                            <span className="text-[10px] text-slate-600 font-mono">
-                                #{index + 1}
-                            </span>
-                            {expanded ? (
-                                <ChevronUp size={13} className="text-slate-500" />
-                            ) : (
-                                <ChevronDown size={13} className="text-slate-500" />
-                            )}
-                        </div>
-                    </div>
-                    {!expanded && (
-                        <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                            {tip.detail}
-                        </p>
+                    )}
+                </div>
+
+                <div className="flex-shrink-0 ml-2">
+                    {open ? (
+                        <ChevronUp size={13} style={{ color: "#64748B" }} />
+                    ) : (
+                        <ChevronDown size={13} style={{ color: "#64748B" }} />
                     )}
                 </div>
             </button>
 
-            {expanded && (
-                <div className="px-4 py-3 bg-slate-900/60 border-t border-slate-700/60 animate-fade-in">
-                    <p className="text-xs text-slate-300 leading-relaxed">{tip.detail}</p>
+            {open && (
+                <div
+                    className="px-4 py-3 animate-fade-in"
+                    style={{ background: "#F8FAFC", borderTop: "1.5px solid #E2E8F0" }}
+                >
+                    <p className="text-xs leading-relaxed" style={{ color: "#334155" }}>
+                        {stripEmoji(tip.detail)}
+                    </p>
                 </div>
             )}
         </div>
     );
 }
 
-/* ─── Tab button ────────────────────────────────────── */
-function TabBtn({ active, onClick, icon: Icon, label, count }) {
+/* ── Tab button ─────────────────────────────────── */
+function TabBtn({ active, onClick, Icon, label, count, color }) {
     return (
         <button
             type="button"
             onClick={onClick}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium
-                  transition-all duration-150 border
-                  ${active
-                    ? "bg-clinical-900/60 border-clinical-700 text-clinical-200"
-                    : "bg-slate-800/40 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-600"
-                }`}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-150"
+            style={{
+                background: active ? `${color}12` : "#F8FAFC",
+                color: active ? color : "#64748B",
+                border: `1.5px solid ${active ? color + "50" : "#E2E8F0"}`,
+                boxShadow: active ? `0 2px 8px ${color}20` : "none",
+            }}
         >
-            <Icon size={14} />
+            <Icon size={14} style={{ color: active ? color : "#94A3B8" }} />
             {label}
             <span
-                className={`text-xs px-1.5 py-0.5 rounded-full font-bold
-                         ${active ? "bg-clinical-700 text-white" : "bg-slate-700 text-slate-400"}`}
+                className="text-xs px-1.5 py-0.5 rounded-full font-bold"
+                style={{
+                    background: active ? color : "#E2E8F0",
+                    color: active ? "#fff" : "#64748B",
+                }}
             >
                 {count}
             </span>
@@ -119,135 +164,170 @@ function TabBtn({ active, onClick, icon: Icon, label, count }) {
     );
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    MAIN COMPONENT
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 export default function RemediesEngine() {
     const { state } = useApp();
     const severity = state.session.hbResult?.severity ?? "normal";
     const data = remediesData[severity] ?? remediesData.normal;
-    const theme = SEVERITY_THEME[severity] ?? SEVERITY_THEME.normal;
+    const theme = SEV_THEME[severity] ?? SEV_THEME.normal;
     const [tab, setTab] = useState("dietary");
 
     const tips = tab === "dietary" ? data.dietary : data.lifestyle;
 
     return (
         <div className="space-y-5">
-            {/* ── Header ── */}
+            {/* ── Header ─────────────────────────────────── */}
             <div className="flex items-start justify-between flex-wrap gap-3">
-                <div>
-                    <h3 className="section-title flex items-center gap-2">
-                        <Leaf size={16} className="text-green-400" />
-                        Remedies & Action Plan
+                <div className="section-bar-green">
+                    <h3 className="section-title" style={{ color: "#16A34A" }}>
+                        Remedies &amp; Action Plan
                     </h3>
                     <p className="section-subtitle">
                         Evidence-based tips tailored to your severity tier
                     </p>
                 </div>
-
-                {/* Severity badge */}
                 <span
-                    className={`text-xs font-bold px-3 py-1.5 rounded-full border ${theme.badge}`}
+                    className="text-xs font-bold px-3 py-1.5 rounded-full"
+                    style={{
+                        background: theme.badgeBg,
+                        color: theme.badgeText,
+                        border: `1.5px solid ${theme.badgeBorder}`,
+                    }}
                 >
-                    {data.label}
+                    {stripEmoji(data.label)}
                 </span>
             </div>
 
-            {/* ── Severity summary card ── */}
+            {/* ── Severity summary card ───────────────────── */}
             <div
-                className={`border ${theme.border} ${theme.bg} rounded-xl p-4 space-y-2`}
+                className="rounded-xl p-4"
+                style={{ background: theme.bg, border: `1.5px solid ${theme.border}` }}
             >
                 <div className="flex items-start gap-2.5">
                     {severity === "normal" ? (
                         <CheckCircle2
                             size={16}
-                            className={`${theme.icon} flex-shrink-0 mt-0.5`}
+                            style={{ color: theme.iconColor, flexShrink: 0, marginTop: 2 }}
                         />
                     ) : (
                         <AlertTriangle
                             size={16}
-                            className={`${theme.icon} flex-shrink-0 mt-0.5`}
+                            style={{ color: theme.iconColor, flexShrink: 0, marginTop: 2 }}
                         />
                     )}
                     <div>
-                        <p className={`text-sm font-semibold ${theme.icon}`}>
-                            {data.label}
+                        <p
+                            className="text-sm font-bold"
+                            style={{ color: theme.headingColor }}
+                        >
+                            {stripEmoji(data.label)}
                         </p>
-                        <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                            {data.description}
+                        <p
+                            className="text-xs mt-0.5 leading-relaxed"
+                            style={{ color: "#475569" }}
+                        >
+                            {stripEmoji(data.description)}
                         </p>
                     </div>
                 </div>
-                <p className="text-xs text-slate-600 pl-6">{data.range}</p>
+                <p
+                    className="text-xs mt-2 pl-6 font-mono font-semibold"
+                    style={{ color: "#94A3B8" }}
+                >
+                    {stripEmoji(data.range)}
+                </p>
             </div>
 
-            {/* ── Tab switcher ── */}
+            {/* ── Tab switcher ───────────────────────────── */}
             <div className="flex gap-2">
                 <TabBtn
                     active={tab === "dietary"}
                     onClick={() => setTab("dietary")}
-                    icon={Salad}
+                    Icon={Salad}
                     label="Dietary"
                     count={data.dietary.length}
+                    color="#16A34A"
                 />
                 <TabBtn
                     active={tab === "lifestyle"}
                     onClick={() => setTab("lifestyle")}
-                    icon={Heart}
+                    Icon={Heart}
                     label="Lifestyle"
                     count={data.lifestyle.length}
+                    color="#2563EB"
                 />
             </div>
 
-            {/* ── Tips list ── */}
+            {/* ── Tips list ──────────────────────────────── */}
             <div className="space-y-2">
                 {tips.map((tip, i) => (
                     <TipCard key={tip.id} tip={tip} index={i} />
                 ))}
             </div>
 
-            {/* ── All-severities quick reference ── */}
-            <div className="border border-slate-700 rounded-xl overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/60">
-                    <BookOpen size={13} className="text-slate-500" />
-                    <p className="text-xs font-semibold text-slate-400">
+            {/* ── All-tiers quick reference ───────────────── */}
+            <div
+                className="rounded-xl overflow-hidden"
+                style={{ border: "1.5px solid #E2E8F0" }}
+            >
+                <div
+                    className="flex items-center gap-2 px-4 py-3"
+                    style={{ background: "#F8FAFC", borderBottom: "1.5px solid #E2E8F0" }}
+                >
+                    <BookOpen size={13} style={{ color: "#64748B" }} />
+                    <p className="text-xs font-bold" style={{ color: "#334155" }}>
                         Quick Reference — All Severity Tiers
                     </p>
                 </div>
-                <div className="divide-y divide-slate-800">
-                    {Object.entries(remediesData).map(([key, val]) => (
+                {Object.entries(remediesData).map(([key, val]) => {
+                    const t = SEV_THEME[key] ?? SEV_THEME.normal;
+                    return (
                         <div
                             key={key}
-                            className={`flex items-center justify-between px-4 py-3
-                           ${key === severity ? "bg-slate-800/40" : ""}`}
+                            className="flex items-center justify-between px-4 py-3"
+                            style={{
+                                background: key === severity ? "#F8FAFC" : "#FFFFFF",
+                                borderBottom: "1px solid #F1F5F9",
+                            }}
                         >
                             <div className="flex items-center gap-2">
                                 {key === severity && (
-                                    <span className="w-1.5 h-1.5 rounded-full bg-clinical-400" />
+                                    <span
+                                        className="w-1.5 h-1.5 rounded-full"
+                                        style={{ background: t.iconColor }}
+                                    />
                                 )}
                                 <span
-                                    className={`text-xs font-medium
-                                   ${SEVERITY_THEME[key]?.icon ?? "text-slate-400"}`}
+                                    className="text-xs font-bold"
+                                    style={{ color: t.headingColor }}
                                 >
-                                    {val.label}
+                                    {stripEmoji(val.label)}
                                 </span>
                             </div>
-                            <span className="text-xs text-slate-600 font-mono">
-                                {val.range}
+                            <span
+                                className="text-xs font-mono font-semibold"
+                                style={{ color: "#94A3B8" }}
+                            >
+                                {stripEmoji(val.range)}
                             </span>
                         </div>
-                    ))}
-                </div>
+                    );
+                })}
             </div>
 
-            {/* ── Disclaimer ── */}
-            <div className="flex gap-2 bg-slate-800/40 border border-slate-700 rounded-xl p-3">
-                <Lightbulb size={12} className="text-amber-600 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-slate-500 leading-relaxed">
-                    These recommendations are evidence-based lifestyle and dietary tips,
-                    not medical prescriptions. Always consult a qualified healthcare
-                    professional before starting any supplement regimen or making
-                    significant dietary changes.
+            {/* ── Disclaimer ─────────────────────────────── */}
+            <div className="callout-warn flex gap-2">
+                <Lightbulb
+                    size={12}
+                    style={{ color: "#D97706", flexShrink: 0, marginTop: 2 }}
+                />
+                <p className="text-xs leading-relaxed" style={{ color: "#92400E" }}>
+                    These are evidence-based lifestyle and dietary tips, not medical
+                    prescriptions. Always consult a qualified healthcare professional
+                    before starting any supplement regimen or making significant dietary
+                    changes.
                 </p>
             </div>
         </div>

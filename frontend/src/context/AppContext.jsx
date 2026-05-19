@@ -15,8 +15,9 @@ const initialState = {
 
     /* Current scan session (ephemeral) */
     session: {
-        capturedImage: null, // base64 data URL from webcam
-        hbResult: null, // { hb, severity, confidence, gradcam }
+        capturedImage: null, // base64 data URL from webcam (original, no overlay)
+        cleanImage: null, // server-processed clean image (white-balanced original)
+        hbResult: null, // { hb, severity, confidence, gradcam_image, clean_image }
         symptoms: [], // array of symptom strings checked by user
         timestamp: null,
     },
@@ -40,6 +41,7 @@ export const ACTIONS = {
     SET_PROFILE: "SET_PROFILE",
     CLEAR_PROFILE: "CLEAR_PROFILE",
     SET_CAPTURED_IMAGE: "SET_CAPTURED_IMAGE",
+    SET_CLEAN_IMAGE: "SET_CLEAN_IMAGE",
     SET_HB_RESULT: "SET_HB_RESULT",
     SET_SYMPTOMS: "SET_SYMPTOMS",
     TOGGLE_SYMPTOM: "TOGGLE_SYMPTOM",
@@ -75,6 +77,12 @@ function appReducer(state, action) {
                 session: { ...state.session, capturedImage: action.payload },
             };
 
+        case ACTIONS.SET_CLEAN_IMAGE:
+            return {
+                ...state,
+                session: { ...state.session, cleanImage: action.payload },
+            };
+
         case ACTIONS.SET_HB_RESULT:
             return {
                 ...state,
@@ -107,7 +115,13 @@ function appReducer(state, action) {
         case ACTIONS.RESET_SESSION:
             return {
                 ...state,
-                session: { ...initialState.session },
+                session: {
+                    capturedImage: null,
+                    cleanImage: null,
+                    hbResult: null,
+                    symptoms: [],
+                    timestamp: null,
+                },
                 currentStep: 1,
                 error: null,
             };
@@ -212,6 +226,10 @@ export function AppProvider({ children }) {
         (img) => dispatch({ type: ACTIONS.SET_CAPTURED_IMAGE, payload: img }),
         [],
     );
+    const setCleanImage = useCallback(
+        (img) => dispatch({ type: ACTIONS.SET_CLEAN_IMAGE, payload: img }),
+        [],
+    );
     const setHbResult = useCallback(
         (result) => dispatch({ type: ACTIONS.SET_HB_RESULT, payload: result }),
         [],
@@ -256,6 +274,7 @@ export function AppProvider({ children }) {
         setProfile,
         clearProfile,
         setCapturedImage,
+        setCleanImage,
         setHbResult,
         toggleSymptom,
         resetSession,

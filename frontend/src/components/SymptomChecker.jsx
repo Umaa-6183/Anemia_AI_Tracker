@@ -18,281 +18,258 @@ import {
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
-/* ═══════════════════════════════════════════════════════
-   SYMPTOM DATABASE
-   Each symptom maps to severity tiers where it commonly
-   appears — used for correlation badge display.
-═══════════════════════════════════════════════════════ */
 const SYMPTOM_GROUPS = [
     {
         group: "Energy & Fatigue",
-        icon: Zap,
-        color: "text-amber-400",
-        bg: "bg-amber-900/20",
-        border: "border-amber-800/50",
+        Icon: Zap,
+        color: "#D97706",
+        bg: "#FFFBEB",
+        border: "#FDE68A",
         symptoms: [
             {
                 id: "fatigue",
                 label: "Persistent Fatigue",
                 detail: "Feeling unusually tired even after adequate sleep",
                 tiers: ["mild", "moderate", "severe"],
-                Icon: Zap,
             },
             {
                 id: "weakness",
                 label: "Generalised Weakness",
                 detail: "Muscles feel heavy or lack normal strength",
                 tiers: ["moderate", "severe"],
-                Icon: Activity,
             },
             {
                 id: "exercise_intolerance",
                 label: "Exercise Intolerance",
                 detail: "Unusual breathlessness or fatigue during light activity",
                 tiers: ["mild", "moderate", "severe"],
-                Icon: Heart,
             },
         ],
     },
     {
         group: "Neurological",
-        icon: Brain,
-        color: "text-purple-400",
-        bg: "bg-purple-900/20",
-        border: "border-purple-800/50",
+        Icon: Brain,
+        color: "#7C3AED",
+        bg: "#F5F3FF",
+        border: "#DDD6FE",
         symptoms: [
             {
                 id: "dizziness",
                 label: "Dizziness / Light-headedness",
                 detail: "Feeling faint, especially when standing up quickly",
                 tiers: ["mild", "moderate", "severe"],
-                Icon: Brain,
             },
             {
                 id: "headache",
                 label: "Frequent Headaches",
                 detail: "Recurring headaches not explained by other causes",
                 tiers: ["mild", "moderate"],
-                Icon: Brain,
             },
             {
                 id: "concentration",
                 label: "Difficulty Concentrating",
                 detail: "Brain fog, trouble focusing, or poor memory",
                 tiers: ["moderate", "severe"],
-                Icon: Brain,
             },
         ],
     },
     {
         group: "Cardiovascular & Respiratory",
-        icon: Heart,
-        color: "text-red-400",
-        bg: "bg-red-900/20",
-        border: "border-red-800/50",
+        Icon: Heart,
+        color: "#E11D48",
+        bg: "#FFF1F2",
+        border: "#FECDD3",
         symptoms: [
             {
                 id: "shortness_of_breath",
                 label: "Shortness of Breath",
                 detail: "Breathlessness at rest or with minimal exertion",
                 tiers: ["moderate", "severe"],
-                Icon: Wind,
             },
             {
                 id: "palpitations",
                 label: "Heart Palpitations",
                 detail: "Noticeably rapid, strong, or irregular heartbeat",
                 tiers: ["moderate", "severe"],
-                Icon: Heart,
             },
             {
                 id: "chest_pain",
                 label: "Chest Pain or Tightness",
                 detail: "Any chest discomfort — seek urgent care if severe",
                 tiers: ["severe"],
-                Icon: Heart,
                 urgent: true,
             },
         ],
     },
     {
         group: "Physical Appearance",
-        icon: Eye,
-        color: "text-clinical-400",
-        bg: "bg-clinical-900/20",
-        border: "border-clinical-800/50",
+        Icon: Eye,
+        color: "#2563EB",
+        bg: "#EFF6FF",
+        border: "#BFDBFE",
         symptoms: [
             {
                 id: "pale_skin",
                 label: "Pale Skin or Complexion",
-                detail: "Noticeable pallor, especially in face, gums, or nail beds",
+                detail: "Noticeable pallor in face, gums, or nail beds",
                 tiers: ["mild", "moderate", "severe"],
-                Icon: Eye,
             },
             {
                 id: "pale_conjunctiva",
                 label: "Pale Conjunctiva",
                 detail: "Inner lower eyelid appears very pale pink or white",
                 tiers: ["mild", "moderate", "severe"],
-                Icon: Eye,
             },
             {
                 id: "brittle_nails",
                 label: "Brittle or Spoon-Shaped Nails",
                 detail: "Nails that chip easily or curve upward (koilonychia)",
                 tiers: ["moderate", "severe"],
-                Icon: Eye,
             },
         ],
     },
     {
         group: "Temperature & Extremities",
-        icon: Thermometer,
-        color: "text-teal-400",
-        bg: "bg-teal-900/20",
-        border: "border-teal-800/50",
+        Icon: Thermometer,
+        color: "#0D9488",
+        bg: "#F0FDFA",
+        border: "#99F6E4",
         symptoms: [
             {
                 id: "cold_hands_feet",
                 label: "Cold Hands & Feet",
                 detail: "Extremities feel cold even in warm environments",
                 tiers: ["mild", "moderate", "severe"],
-                Icon: Thermometer,
             },
             {
                 id: "cold_intolerance",
                 label: "General Cold Intolerance",
                 detail: "Feeling cold more than those around you",
                 tiers: ["mild", "moderate"],
-                Icon: Thermometer,
             },
         ],
     },
     {
         group: "Sleep & Restlessness",
-        icon: Moon,
-        color: "text-indigo-400",
-        bg: "bg-indigo-900/20",
-        border: "border-indigo-800/50",
+        Icon: Moon,
+        color: "#4F46E5",
+        bg: "#EEF2FF",
+        border: "#C7D2FE",
         symptoms: [
             {
                 id: "restless_legs",
                 label: "Restless Leg Syndrome",
                 detail: "Uncomfortable urge to move legs, especially at night",
                 tiers: ["mild", "moderate"],
-                Icon: Moon,
             },
             {
                 id: "poor_sleep",
                 label: "Poor Sleep Quality",
                 detail: "Difficulty falling or staying asleep despite tiredness",
                 tiers: ["mild", "moderate"],
-                Icon: Moon,
             },
         ],
     },
 ];
 
-/* ─── Severity correlation badge ───────────────────── */
 const TIER_COLORS = {
-    mild: "bg-yellow-900/40 text-yellow-400 border-yellow-800",
-    moderate: "bg-orange-900/40 text-orange-400 border-orange-800",
-    severe: "bg-red-900/40    text-red-400    border-red-800",
+    mild: { bg: "#FFFBEB", text: "#92400E", border: "#FDE68A" },
+    moderate: { bg: "#FFF7ED", text: "#9A3412", border: "#FDBA74" },
+    severe: { bg: "#FEF2F2", text: "#991B1B", border: "#FCA5A5" },
 };
 
 function TierBadge({ tier }) {
+    const c = TIER_COLORS[tier] || {};
     return (
         <span
-            className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border ${TIER_COLORS[tier] ?? ""}`}
+            className="text-[9px] font-bold px-1.5 py-0.5 rounded border"
+            style={{ background: c.bg, color: c.text, borderColor: c.border }}
         >
             {tier.charAt(0).toUpperCase() + tier.slice(1)}
         </span>
     );
 }
 
-/* ─── Single symptom row ────────────────────────────── */
 function SymptomRow({ symptom, checked, onToggle, currentSeverity }) {
-    const { id, label, detail, tiers, Icon, urgent } = symptom;
+    const { id, label, detail, tiers, urgent } = symptom;
     const relevant = currentSeverity && tiers.includes(currentSeverity);
-
     return (
         <button
             type="button"
             onClick={() => onToggle(id)}
-            className={`w-full flex items-start gap-3 px-4 py-3 rounded-xl border text-left
-                  transition-all duration-150 group
-                  ${checked
-                    ? "bg-clinical-900/40 border-clinical-700 shadow-sm"
-                    : urgent
-                        ? "bg-red-950/20 border-red-900/40 hover:border-red-800/60"
-                        : "bg-slate-800/40 border-slate-700/60 hover:border-slate-600"
-                }`}
+            className="w-full flex items-start gap-3 px-4 py-3 rounded-xl text-left transition-all duration-150"
+            style={{
+                background: checked ? "#EFF6FF" : urgent ? "#FEF2F2" : "#FFFFFF",
+                border: `1.5px solid ${checked ? "#BFDBFE" : urgent ? "#FECACA" : "#E2E8F0"}`,
+                marginBottom: "0.25rem",
+            }}
         >
-            {/* Checkbox */}
             <div
-                className={`flex-shrink-0 mt-0.5 transition-colors
-                        ${checked ? "text-clinical-400" : "text-slate-600 group-hover:text-slate-500"}`}
+                className="flex-shrink-0 mt-0.5"
+                style={{ color: checked ? "#2563EB" : "#CBD5E1" }}
             >
                 {checked ? <CheckSquare size={16} /> : <Square size={16} />}
             </div>
-
-            {/* Content */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                     <span
-                        className={`text-sm font-medium
-                            ${checked
-                                ? "text-white"
-                                : urgent
-                                    ? "text-red-300"
-                                    : "text-slate-300"
-                            }`}
+                        className="text-sm font-semibold"
+                        style={{
+                            color: checked ? "#1D4ED8" : urgent ? "#991B1B" : "#0F172A",
+                        }}
                     >
                         {label}
                     </span>
                     {urgent && (
                         <span
-                            className="flex items-center gap-0.5 text-[9px] font-bold text-red-400
-                              bg-red-900/40 border border-red-800 px-1.5 py-0.5 rounded"
+                            className="flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded"
+                            style={{
+                                background: "#FEE2E2",
+                                color: "#991B1B",
+                                border: "1px solid #FECACA",
+                            }}
                         >
-                            <AlertTriangle size={8} />
-                            URGENT
+                            <AlertTriangle size={8} /> URGENT
                         </span>
                     )}
                     {relevant && !checked && (
                         <span
-                            className="text-[9px] text-clinical-500 border border-clinical-800
-                             bg-clinical-900/30 px-1.5 py-0.5 rounded font-medium"
+                            className="text-[9px] font-semibold px-1.5 py-0.5 rounded"
+                            style={{
+                                background: "#EFF6FF",
+                                color: "#2563EB",
+                                border: "1px solid #BFDBFE",
+                            }}
                         >
                             Matches your result
                         </span>
                     )}
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5 leading-snug">{detail}</p>
-
-                {/* Tier correlation badges */}
+                <p className="text-xs mt-0.5 leading-snug" style={{ color: "#64748B" }}>
+                    {detail}
+                </p>
                 <div className="flex gap-1 mt-1.5 flex-wrap">
                     {tiers.map((t) => (
                         <TierBadge key={t} tier={t} />
                     ))}
                 </div>
             </div>
-
-            {/* Checked indicator dot */}
             {checked && (
-                <div className="w-2 h-2 bg-clinical-400 rounded-full flex-shrink-0 mt-1.5" />
+                <span
+                    className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
+                    style={{ background: "#2563EB" }}
+                />
             )}
         </button>
     );
 }
 
-/* ─── Group accordion ───────────────────────────────── */
 function SymptomGroup({
     group,
-    groupColor,
-    groupBg,
-    groupBorder,
-    GroupIcon,
+    color,
+    bg,
+    border,
+    Icon,
     symptoms,
     checkedIds,
     onToggle,
@@ -301,38 +278,39 @@ function SymptomGroup({
 }) {
     const [open, setOpen] = useState(defaultOpen);
     const checkedCount = symptoms.filter((s) => checkedIds.includes(s.id)).length;
-
     return (
-        <div className={`border ${groupBorder} rounded-xl overflow-hidden`}>
-            {/* Group header */}
+        <div
+            className="rounded-xl overflow-hidden"
+            style={{ border: `1.5px solid ${border}` }}
+        >
             <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
-                className={`w-full flex items-center justify-between px-4 py-3
-                    ${groupBg} hover:brightness-110 transition-all`}
+                className="w-full flex items-center justify-between px-4 py-3 transition-colors"
+                style={{ background: bg }}
             >
                 <div className="flex items-center gap-2.5">
-                    <GroupIcon size={15} className={groupColor} />
-                    <span className="text-sm font-semibold text-slate-200">{group}</span>
+                    <Icon size={15} style={{ color }} />
+                    <span className="text-sm font-bold" style={{ color: "#0F172A" }}>
+                        {group}
+                    </span>
                     {checkedCount > 0 && (
                         <span
-                            className="w-5 h-5 bg-clinical-600 rounded-full text-[10px]
-                             font-bold text-white flex items-center justify-center"
+                            className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                            style={{ background: color }}
                         >
                             {checkedCount}
                         </span>
                     )}
                 </div>
                 {open ? (
-                    <ChevronUp size={14} className="text-slate-500" />
+                    <ChevronUp size={14} style={{ color: "#64748B" }} />
                 ) : (
-                    <ChevronDown size={14} className="text-slate-500" />
+                    <ChevronDown size={14} style={{ color: "#64748B" }} />
                 )}
             </button>
-
-            {/* Symptom list */}
             {open && (
-                <div className="p-3 space-y-2 bg-slate-900/40 animate-fade-in">
+                <div className="p-3 animate-fade-in" style={{ background: "#fff" }}>
                     {symptoms.map((s) => (
                         <SymptomRow
                             key={s.id}
@@ -348,105 +326,92 @@ function SymptomGroup({
     );
 }
 
-/* ═══════════════════════════════════════════════════════
-   MAIN COMPONENT
-═══════════════════════════════════════════════════════ */
 export default function SymptomChecker() {
     const { state, toggleSymptom } = useApp();
     const checkedIds = state.session.symptoms;
     const currentSeverity = state.session.hbResult?.severity;
-    const total = SYMPTOM_GROUPS.reduce((n, g) => n + g.symptoms.length, 0);
-
-    /* Correlation: how many checked symptoms match current severity */
     const allSymptoms = SYMPTOM_GROUPS.flatMap((g) => g.symptoms);
+    const total = allSymptoms.length;
+
     const matchingChecked = checkedIds.filter((id) => {
         const sym = allSymptoms.find((s) => s.id === id);
         return sym && currentSeverity && sym.tiers.includes(currentSeverity);
     });
-
-    /* Urgent symptoms checked */
     const urgentChecked = checkedIds.filter((id) =>
         allSymptoms.find((s) => s.id === id && s.urgent),
     );
 
     return (
         <div className="space-y-4">
-            {/* ── Header ── */}
+            {/* Header */}
             <div className="flex items-start justify-between flex-wrap gap-3">
-                <div>
-                    <h3 className="section-title flex items-center gap-2">
-                        <ClipboardList size={16} className="text-clinical-400" />
-                        Symptom Checker
+                <div className="section-bar-rose">
+                    <h3 className="section-title" style={{ color: "#E11D48" }}>
+                        <span className="flex items-center gap-2">
+                            <ClipboardList size={16} />
+                            Symptom Checker
+                        </span>
                     </h3>
                     <p className="section-subtitle">
                         Select all symptoms you are currently experiencing
                     </p>
                 </div>
-
-                {/* Progress pill */}
                 <div
-                    className="flex items-center gap-2 bg-slate-800 border border-slate-700
-                         px-3 py-1.5 rounded-full"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                    style={{ background: "#EFF6FF", border: "1.5px solid #BFDBFE" }}
                 >
-                    <CheckSquare size={12} className="text-clinical-400" />
-                    <span className="text-xs font-semibold text-slate-300">
+                    <CheckSquare size={12} style={{ color: "#2563EB" }} />
+                    <span className="text-xs font-bold" style={{ color: "#1D4ED8" }}>
                         {checkedIds.length}
-                        <span className="text-slate-600"> / {total}</span>
+                        <span style={{ color: "#94A3B8" }}> / {total}</span>
                     </span>
                 </div>
             </div>
 
-            {/* ── Correlation banner ── */}
+            {/* Correlation banner */}
             {currentSeverity && matchingChecked.length > 0 && (
-                <div
-                    className="flex gap-2.5 bg-clinical-950/50 border border-clinical-900/60
-                         rounded-xl px-4 py-3 animate-fade-in"
-                >
+                <div className="callout-info flex gap-2.5 animate-fade-in">
                     <Activity
                         size={14}
-                        className="text-clinical-400 flex-shrink-0 mt-0.5"
+                        style={{ color: "#2563EB", flexShrink: 0, marginTop: 2 }}
                     />
-                    <p className="text-xs text-clinical-300 leading-relaxed">
-                        <span className="font-semibold">
+                    <p className="text-xs leading-relaxed" style={{ color: "#1D4ED8" }}>
+                        <span className="font-bold">
                             {matchingChecked.length} of your selected symptoms
                         </span>{" "}
                         are clinically associated with your{" "}
-                        <span className="font-semibold">{currentSeverity}</span> anaemia
-                        result. This pattern strengthens the AI prediction.
+                        <span className="font-bold">{currentSeverity}</span> anaemia result.
                     </p>
                 </div>
             )}
 
-            {/* ── Urgent warning ── */}
+            {/* Urgent warning */}
             {urgentChecked.length > 0 && (
-                <div
-                    className="flex gap-2.5 bg-red-950/50 border border-red-800
-                         rounded-xl px-4 py-3 animate-fade-in"
-                >
+                <div className="callout-danger flex gap-2.5 animate-fade-in">
                     <AlertTriangle
                         size={14}
-                        className="text-red-400 flex-shrink-0 mt-0.5"
+                        style={{ color: "#DC2626", flexShrink: 0, marginTop: 2 }}
                     />
-                    <p className="text-xs text-red-300 leading-relaxed">
+                    <p className="text-xs leading-relaxed" style={{ color: "#991B1B" }}>
                         <span className="font-bold">
                             You have checked an urgent symptom (chest pain).
                         </span>{" "}
-                        Please seek immediate medical attention or call emergency services.
+                        Please seek immediate medical attention.
                     </p>
                 </div>
             )}
 
-            {/* ── Symptom groups ── */}
+            {/* Groups */}
             <div className="space-y-3">
                 {SYMPTOM_GROUPS.map(
-                    ({ group, icon: GroupIcon, color, bg, border, symptoms }, i) => (
+                    ({ group, Icon, color, bg, border, symptoms }, i) => (
                         <SymptomGroup
                             key={group}
                             group={group}
-                            groupColor={color}
-                            groupBg={bg}
-                            groupBorder={border}
-                            GroupIcon={GroupIcon}
+                            color={color}
+                            bg={bg}
+                            border={border}
+                            Icon={Icon}
                             symptoms={symptoms}
                             checkedIds={checkedIds}
                             onToggle={toggleSymptom}
@@ -457,12 +422,17 @@ export default function SymptomChecker() {
                 )}
             </div>
 
-            {/* ── Summary ── */}
+            {/* Selected chips */}
             {checkedIds.length > 0 && (
-                <div className="card border-clinical-900/60 bg-clinical-950/20 space-y-3 animate-fade-in">
-                    <p className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                        <ClipboardList size={14} className="text-clinical-400" />
-                        Selected Symptoms ({checkedIds.length})
+                <div
+                    className="card space-y-3 animate-fade-in"
+                    style={{ borderColor: "#BFDBFE", background: "#F8FBFF" }}
+                >
+                    <p
+                        className="text-sm font-bold flex items-center gap-2"
+                        style={{ color: "#1D4ED8" }}
+                    >
+                        <ClipboardList size={14} /> Selected Symptoms ({checkedIds.length})
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {checkedIds.map((id) => {
@@ -471,32 +441,44 @@ export default function SymptomChecker() {
                                 <button
                                     key={id}
                                     onClick={() => toggleSymptom(id)}
-                                    className="flex items-center gap-1.5 bg-clinical-900/40 border border-clinical-800
-                             text-clinical-200 text-xs font-medium px-2.5 py-1 rounded-full
-                             hover:bg-red-900/30 hover:border-red-800 hover:text-red-300
-                             transition-all duration-150"
-                                    title="Click to remove"
+                                    className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full transition-all"
+                                    style={{
+                                        background: "#EFF6FF",
+                                        border: "1.5px solid #BFDBFE",
+                                        color: "#1D4ED8",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = "#FEF2F2";
+                                        e.currentTarget.style.color = "#991B1B";
+                                        e.currentTarget.style.borderColor = "#FECACA";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = "#EFF6FF";
+                                        e.currentTarget.style.color = "#1D4ED8";
+                                        e.currentTarget.style.borderColor = "#BFDBFE";
+                                    }}
                                 >
-                                    {sym.label}
-                                    <span className="text-slate-500">×</span>
+                                    {sym.label} <span style={{ opacity: 0.5 }}>×</span>
                                 </button>
                             ) : null;
                         })}
                     </div>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs" style={{ color: "#94A3B8" }}>
                         These symptoms will be included in your clinical PDF report.
                     </p>
                 </div>
             )}
 
-            {/* ── Clinical note ── */}
-            <div className="flex gap-2 bg-slate-800/40 border border-slate-700 rounded-xl p-3">
-                <Info size={12} className="text-slate-500 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-slate-500 leading-relaxed">
-                    Symptom data is self-reported and stored only on your device. It is
-                    included in the PDF report to provide your clinician with context
-                    alongside the AI Hb estimate. It does not influence the model's
-                    output.
+            {/* Clinical note */}
+            <div className="callout-info flex gap-2">
+                <Info
+                    size={12}
+                    style={{ color: "#2563EB", flexShrink: 0, marginTop: 2 }}
+                />
+                <p className="text-xs leading-relaxed" style={{ color: "#1D4ED8" }}>
+                    Symptom data is stored only on your device and included in the PDF
+                    report to provide your clinician with context alongside the AI Hb
+                    estimate. It does not influence the model's output.
                 </p>
             </div>
         </div>

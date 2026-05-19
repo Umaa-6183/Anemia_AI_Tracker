@@ -88,6 +88,8 @@ function sectionHdr(doc, title, y) {
 function buildPDF(state) {
     const { profile, session, labLogs } = state;
     const result = session.hbResult;
+    // Prefer server white-balanced clean image; fall back to raw capture
+    const origImage = session.cleanImage || session.capturedImage;
     if (!result || !profile) throw new Error("Missing scan result or profile");
 
     const sevInfo = classifySeverity(
@@ -199,17 +201,16 @@ function buildPDF(state) {
     doc.text(`IQA: ${result.iqa_passed ? "Passed" : "Failed"}`, ml + 124, y + 22);
     y += 30;
 
-    /* ── Grad-CAM image ──────────────────────────────── */
-    if (result.gradcam_image) {
+    /* ── Conjunctival image (original, no overlay) ─── */
+    const pdfImage = origImage || result.gradcam_image; // prefer original
+    if (pdfImage) {
         try {
-            const fmt = result.gradcam_image.startsWith("data:image/png")
-                ? "PNG"
-                : "JPEG";
+            const fmt = pdfImage.startsWith("data:image/png") ? "PNG" : "JPEG";
             setFont(doc, "bold");
             setTextC(doc, C.navy);
             doc.setFontSize(8);
-            doc.text("Grad-CAM Heatmap (Conjunctival Region)", ml, y + 4);
-            doc.addImage(result.gradcam_image, fmt, ml, y + 6, 80, 50);
+            doc.text("Conjunctival Image (Original Capture)", ml, y + 4);
+            doc.addImage(pdfImage, fmt, ml, y + 6, 80, 50);
             const lgX = ml + 85;
             setFont(doc, "bold");
             setTextC(doc, C.navy);
@@ -218,24 +219,27 @@ function buildPDF(state) {
             setFont(doc, "normal");
             setTextC(doc, C.darkGray);
             doc.setFontSize(7);
-            [
-                ["Red / Yellow", "High activation - strongest Hb signal"],
-                ["Green", "Moderate activation region"],
-                ["Blue", "Low activation - minimal contribution"],
-            ].forEach(([col, desc], i) => {
-                setFont(doc, "bold");
-                doc.text(`${col}:`, lgX, y + 18 + i * 8);
-                setFont(doc, "normal");
-                doc.text(desc, lgX + 24, y + 18 + i * 8);
-            });
+            setFont(doc, "normal");
+            setTextC(doc, C.darkGray);
+            doc.setFontSize(7.5);
+            doc.text(
+                "Mode: " + (origImage ? "Original scan" : "Processed image"),
+                lgX,
+                y + 10,
+            );
+            doc.text(
+                "Source: " + (origImage ? "Live camera / upload" : "Model output"),
+                lgX,
+                y + 16,
+            );
             setFont(doc, "italic");
             setTextC(doc, C.midGray);
             doc.setFontSize(6.5);
             wrapText(
                 doc,
-                "Grad-CAM back-propagates the output gradient to the final conv layer, highlighting pixels that most influenced the Hb estimate.",
+                "This is the original conjunctival image captured during the scan. The AI analysed the pallor and vascularity of the inner lower eyelid to estimate the Haemoglobin level.",
                 lgX,
-                y + 44,
+                y + 24,
                 97,
                 4.5,
             );
@@ -519,7 +523,7 @@ export default function PDFReport() {
                     {
                         n: "2",
                         label: "AI Diagnostic",
-                        detail: "Hb estimate, severity, confidence, Grad-CAM",
+                        detail: "Hb estimate, severity, confidence, original image",
                         done: hasResult,
                     },
                     {

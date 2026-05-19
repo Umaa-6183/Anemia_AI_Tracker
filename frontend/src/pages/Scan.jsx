@@ -53,7 +53,7 @@ function ProcessingTimeline({ activeStep }) {
                                 ? "bg-clinical-900/50 border border-clinical-800"
                                 : done
                                     ? "bg-green-900/20 border border-green-900/40"
-                                    : "bg-slate-800/40 border border-slate-800 opacity-40"
+                                    : "bg-gray-50 border border-gray-200 opacity-40"
                             }`}
                     >
                         <div
@@ -62,7 +62,7 @@ function ProcessingTimeline({ activeStep }) {
                                     ? "bg-clinical-600"
                                     : done
                                         ? "bg-green-600"
-                                        : "bg-slate-700"
+                                        : "bg-gray-200"
                                 }`}
                         >
                             {done ? (
@@ -70,9 +70,7 @@ function ProcessingTimeline({ activeStep }) {
                             ) : active ? (
                                 <Loader2 size={12} className="text-white animate-spin" />
                             ) : (
-                                <span className="text-[9px] text-slate-500 font-bold">
-                                    {id}
-                                </span>
+                                <span className="text-[9px] text-gray-500 font-bold">{id}</span>
                             )}
                         </div>
                         <span
@@ -109,8 +107,14 @@ function ProcessingTimeline({ activeStep }) {
 ═══════════════════════════════════════════════════════ */
 export default function Scan() {
     const navigate = useNavigate();
-    const { state, setCapturedImage, setHbResult, addHbHistory, setStep } =
-        useApp();
+    const {
+        state,
+        setCapturedImage,
+        setCleanImage,
+        setHbResult,
+        addHbHistory,
+        setStep,
+    } = useApp();
 
     const [phase, setPhase] = useState(PHASE.CAMERA);
     const [activeStep, setActiveStep] = useState(0);
@@ -194,6 +198,11 @@ export default function Scan() {
                 timestamp: nowISO(),
             };
 
+            /* Store clean image (server white-balanced original) into context */
+            if (apiResult.clean_image) {
+                setCleanImage(apiResult.clean_image);
+            }
+
             /* Persist to context + history */
             setHbResult(enriched);
             addHbHistory({
@@ -256,7 +265,7 @@ export default function Scan() {
                         </>
                     )}
                 </h1>
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="text-sm text-gray-500 mt-1">
                     {phase === PHASE.CAMERA &&
                         "Pull your lower eyelid down — the camera fires automatically"}
                     {phase === PHASE.PROCESSING &&
@@ -277,15 +286,15 @@ export default function Scan() {
                            rounded-xl px-4 py-3"
                     >
                         <Activity size={15} className="text-clinical-400 flex-shrink-0" />
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-gray-500">
                             Scanning for{" "}
                             <span className="text-white font-semibold">
                                 {state.profile?.name}
                             </span>
                             {" · "}
-                            <span className="text-slate-300">{state.profile?.age} yrs</span>
+                            <span className="text-gray-700">{state.profile?.age} yrs</span>
                             {" · "}
-                            <span className="text-slate-300 capitalize">
+                            <span className="text-gray-700 capitalize">
                                 {state.profile?.sex}
                             </span>
                             {state.profile?.pregnancyStatus && (
@@ -311,7 +320,7 @@ export default function Scan() {
                                 <p className="text-sm font-semibold text-white">
                                     CNN Inference
                                 </p>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-gray-500">
                                     4-layer ConvNet + demographic fusion
                                 </p>
                             </div>
@@ -319,7 +328,7 @@ export default function Scan() {
                         <div className="text-right">
                             <p className="text-2xl font-mono font-bold text-clinical-300">
                                 {elapsed.toFixed(1)}
-                                <span className="text-sm text-slate-500 ml-1">s</span>
+                                <span className="text-sm text-gray-500 ml-1">s</span>
                             </p>
                             <div className="flex items-center gap-1 justify-end mt-0.5">
                                 <Clock size={10} className="text-slate-600" />
@@ -332,7 +341,7 @@ export default function Scan() {
                     <ProcessingTimeline activeStep={activeStep} />
 
                     {/* Animated progress bar */}
-                    <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                         <div
                             className="h-full bg-gradient-to-r from-clinical-600 to-purple-500 rounded-full
                           transition-all duration-500"
@@ -343,9 +352,9 @@ export default function Scan() {
                     </div>
 
                     {/* Clinical note */}
-                    <div className="flex gap-2.5 bg-slate-800/40 border border-slate-700 rounded-xl p-3">
-                        <Info size={13} className="text-slate-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-xs text-slate-500 leading-relaxed">
+                    <div className="flex gap-2.5 bg-gray-50 border border-gray-300 rounded-xl p-3">
+                        <Info size={13} className="text-gray-500 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-gray-500 leading-relaxed">
                             The model analyses vascular pigmentation in the palpebral
                             conjunctiva. Your age, sex, and pregnancy status are fused with
                             image features in the final dense layers for a personalised Hb
@@ -370,7 +379,7 @@ export default function Scan() {
                         <div>
                             <p className="text-4xl font-extrabold text-white font-mono">
                                 {Number(result.hb).toFixed(1)}
-                                <span className="text-lg text-slate-400 ml-1.5">g/dL</span>
+                                <span className="text-lg text-gray-500 ml-1.5">g/dL</span>
                             </p>
                             <p
                                 className="text-sm mt-1"
@@ -380,18 +389,18 @@ export default function Scan() {
                             </p>
                         </div>
                         <div className="flex items-center justify-center gap-2">
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-gray-500">
                                 Confidence:{" "}
-                                <span className="text-slate-300 font-medium">
+                                <span className="text-gray-700 font-medium">
                                     {result.confidence
                                         ? `${Math.round(result.confidence * 100)}%`
                                         : "—"}
                                 </span>
                             </div>
-                            <span className="text-slate-700">·</span>
-                            <div className="text-xs text-slate-500">
+                            <span className="text-gray-400">·</span>
+                            <div className="text-xs text-gray-500">
                                 Time:{" "}
-                                <span className="text-slate-300 font-medium">
+                                <span className="text-gray-700 font-medium">
                                     {elapsed.toFixed(1)}s
                                 </span>
                             </div>
@@ -427,7 +436,7 @@ export default function Scan() {
                                 <p className="text-sm font-semibold text-red-300">
                                     Inference Error
                                 </p>
-                                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                                     {errorMsg}
                                 </p>
                             </div>
@@ -435,7 +444,7 @@ export default function Scan() {
 
                         {/* Troubleshooting tips */}
                         <div className="border-t border-red-900/40 pt-3 space-y-1">
-                            <p className="text-xs font-medium text-slate-400 mb-2">
+                            <p className="text-xs font-medium text-gray-500 mb-2">
                                 Troubleshooting:
                             </p>
                             {[
@@ -444,8 +453,8 @@ export default function Scan() {
                                 "Make sure the conjunctiva was fully visible in the oval",
                                 "Try with better lighting",
                             ].map((tip) => (
-                                <p key={tip} className="text-xs text-slate-500 flex gap-2">
-                                    <span className="text-slate-700">›</span>
+                                <p key={tip} className="text-xs text-gray-500 flex gap-2">
+                                    <span className="text-gray-400">›</span>
                                     {tip}
                                 </p>
                             ))}

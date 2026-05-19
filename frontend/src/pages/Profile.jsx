@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
     User,
     Calendar,
-    VenusAndMars,
+    Venus,
     Baby,
     ChevronRight,
     CheckCircle2,
@@ -34,7 +34,7 @@ function Field({ label, error, icon: Icon, children, hint }) {
     return (
         <div>
             <label className="label flex items-center gap-1.5">
-                {Icon && <Icon size={13} className="text-slate-500" />}
+                {Icon && <Icon size={13} className="text-gray-500" />}
                 {label}
             </label>
             {children}
@@ -60,7 +60,7 @@ function SexButton({ value, selected, onClick, icon, label, description }) {
             className={`relative flex-1 p-4 rounded-xl border-2 text-left transition-all duration-150
                   ${selected
                     ? "bg-clinical-900/50 border-clinical-500 shadow-lg shadow-clinical-900/30"
-                    : "bg-slate-800/60 border-slate-700 hover:border-slate-600"
+                    : "bg-gray-100 border-gray-300 hover:border-gray-400"
                 }`}
         >
             {selected && (
@@ -71,13 +71,11 @@ function SexButton({ value, selected, onClick, icon, label, description }) {
             )}
             <span className="text-2xl block mb-1">{icon}</span>
             <p
-                className={`text-sm font-semibold ${selected ? "text-clinical-200" : "text-slate-300"}`}
+                className={`text-sm font-semibold ${selected ? "text-clinical-200" : "text-gray-700"}`}
             >
                 {label}
             </p>
-            <p className="text-xs text-slate-500 mt-0.5 leading-snug">
-                {description}
-            </p>
+            <p className="text-xs text-gray-500 mt-0.5 leading-snug">{description}</p>
         </button>
     );
 }
@@ -193,7 +191,7 @@ export default function Profile() {
                                     <h2 className="text-lg font-bold text-white">
                                         {state.profile.name}
                                     </h2>
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-gray-500">
                                         Profile · Created{" "}
                                         {new Date(state.profile.createdAt).toLocaleDateString()}
                                     </p>
@@ -219,7 +217,7 @@ export default function Profile() {
                                 {
                                     label: "Biological Sex",
                                     value: state.profile.sex === "male" ? "Male" : "Female",
-                                    Icon: VenusAndMars,
+                                    Icon: Venus,
                                 },
                                 {
                                     label: "Pregnancy Status",
@@ -234,13 +232,11 @@ export default function Profile() {
                             ].map(({ label, value, Icon }) => (
                                 <div
                                     key={label}
-                                    className="bg-slate-800/60 rounded-xl p-3 border border-slate-700"
+                                    className="bg-gray-100 rounded-xl p-3 border border-gray-300"
                                 >
                                     <div className="flex items-center gap-1.5 mb-1">
-                                        <Icon size={11} className="text-slate-500" />
-                                        <p className="text-xs text-slate-500 font-medium">
-                                            {label}
-                                        </p>
+                                        <Icon size={11} className="text-gray-500" />
+                                        <p className="text-xs text-gray-500 font-medium">{label}</p>
                                     </div>
                                     <p className="text-sm font-semibold text-white capitalize">
                                         {value}
@@ -280,15 +276,11 @@ export default function Profile() {
 
                     {/* Clinical note */}
                     <div className="flex gap-2.5 bg-amber-900/20 border border-amber-800/50 rounded-xl p-3">
-                        <Info
-                            size={14}
-                            className="text-amber-500 flex-shrink-0 mt-0.5"
-                        />
+                        <Info size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
                         <p className="text-xs text-amber-300/80 leading-relaxed">
-                            Your age, sex, and pregnancy status are passed directly into
-                            the AI model's dense layers to apply WHO-calibrated Hb
-                            thresholds. Keeping them accurate ensures a clinically
-                            meaningful result.
+                            Your age, sex, and pregnancy status are passed directly into the
+                            AI model's dense layers to apply WHO-calibrated Hb thresholds.
+                            Keeping them accurate ensures a clinically meaningful result.
                         </p>
                     </div>
                 </div>
@@ -307,7 +299,7 @@ export default function Profile() {
                     <h1 className="text-2xl font-bold text-white">
                         {hasProfile ? "Edit Your Profile" : "Patient Profile"}
                     </h1>
-                    <p className="text-sm text-slate-400 mt-1">
+                    <p className="text-sm text-gray-500 mt-1">
                         {hasProfile
                             ? "Update your details below. Changes apply to all future scans."
                             : "Enter your details once. They personalise every Haemoglobin estimate."}
@@ -351,7 +343,7 @@ export default function Profile() {
                     <Field
                         label="Biological Sex"
                         error={errors.sex}
-                        icon={VenusAndMars}
+                        icon={Venus}
                         hint="Affects WHO Hb thresholds (male ≥13.0, female ≥12.0 g/dL)"
                     >
                         <div className="flex gap-3">
@@ -388,8 +380,8 @@ export default function Profile() {
                                 hint="Lowers the normal Hb threshold to ≥ 11.0 g/dL (WHO)"
                             >
                                 <label
-                                    className="flex items-center gap-3 bg-slate-800/60 border border-slate-700
-                                   rounded-xl px-4 py-3 cursor-pointer hover:border-slate-600
+                                    className="flex items-center gap-3 bg-gray-100 border border-gray-300
+                                   rounded-xl px-4 py-3 cursor-pointer hover:border-gray-400
                                    transition-all group"
                                 >
                                     <div
@@ -397,15 +389,11 @@ export default function Profile() {
                                    border-2 transition-all
                                    ${form.pregnancyStatus
                                                 ? "bg-clinical-600 border-clinical-500"
-                                                : "bg-slate-700 border-slate-600 group-hover:border-slate-500"
+                                                : "bg-gray-200 border-gray-400 group-hover:border-gray-400"
                                             }`}
                                     >
                                         {form.pregnancyStatus && (
-                                            <svg
-                                                viewBox="0 0 12 12"
-                                                fill="none"
-                                                className="w-3 h-3"
-                                            >
+                                            <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
                                                 <path
                                                     d="M2 6l3 3 5-5"
                                                     stroke="white"
@@ -424,10 +412,10 @@ export default function Profile() {
                                         className="sr-only"
                                     />
                                     <div>
-                                        <p className="text-sm font-medium text-slate-200">
+                                        <p className="text-sm font-medium text-gray-800">
                                             Currently pregnant
                                         </p>
-                                        <p className="text-xs text-slate-500 mt-0.5">
+                                        <p className="text-xs text-gray-500 mt-0.5">
                                             WHO threshold drops to ≥ 11.0 g/dL
                                         </p>
                                     </div>

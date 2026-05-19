@@ -171,6 +171,8 @@ docker compose --profile dev up
 ### Backend Setup
 
 ```bash
+echo 'alias python="python3.10"' >> ~/.zshrc
+source ~/.zshrc
 cd backend
 
 # Create and activate virtual environment

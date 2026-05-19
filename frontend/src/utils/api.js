@@ -10,8 +10,10 @@ const BASE_URL = process.env.REACT_APP_API_URL || "";
 
 const client = axios.create({
     baseURL: BASE_URL,
-    timeout: 60_000, // 60 s — model inference can take a moment
-    headers: { "Content-Type": "application/json" },
+    timeout: 60 _000, // 60 s — model inference can take a moment
+    headers: {
+        "Content-Type": "application/json"
+    },
 });
 
 /* ── Request interceptor: attach any stored auth token ── */
@@ -26,19 +28,21 @@ client.interceptors.response.use(
     (res) => res,
     (err) => {
         const message =
-            err.response?.data?.detail ||
-            err.response?.data?.message ||
-            err.message ||
-            "An unexpected error occurred";
+            err.response ? .data ? .detail ||
+                err.response ? .data ? .message ||
+                    err.message ||
+                    "An unexpected error occurred";
         return Promise.reject(new Error(message));
-    },
+    }
 );
 
 /* ═══════════════════════════════════════════════════════
    HEALTH CHECK
 ═══════════════════════════════════════════════════════ */
 export async function healthCheck() {
-    const { data } = await client.get("/api/health");
+    const {
+        data
+    } = await client.get("/api/health");
     return data;
 }
 
@@ -49,7 +53,9 @@ export async function healthCheck() {
    Returns: { passed: bool, blur_score: float, brightness: float, feedback: string }
 ═══════════════════════════════════════════════════════ */
 export async function assessImageQuality(imageDataUrl) {
-    const { data } = await client.post("/api/iqa", {
+    const {
+        data
+    } = await client.post("/api/iqa", {
         image: imageDataUrl,
     });
     return data;
@@ -76,9 +82,11 @@ export async function predictHemoglobin({
     imageDataUrl,
     age,
     sex,
-    pregnancyStatus,
+    pregnancyStatus
 }) {
-    const { data } = await client.post("/api/predict", {
+    const {
+        data
+    } = await client.post("/api/predict", {
         image: imageDataUrl,
         age: Number(age),
         sex: sex.toLowerCase(),
@@ -105,7 +113,9 @@ export async function generatePDFReport(payload) {
    POST /api/labs
 ═══════════════════════════════════════════════════════ */
 export async function saveLabLog(log) {
-    const { data } = await client.post("/api/labs", log);
+    const {
+        data
+    } = await client.post("/api/labs", log);
     return data;
 }
 

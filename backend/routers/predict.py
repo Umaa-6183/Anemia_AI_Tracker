@@ -61,7 +61,8 @@ class PredictResponse(BaseModel):
     hb:                 float
     severity:           str
     confidence:         float
-    gradcam_image:      Optional[str]
+    gradcam_image:      Optional[str]   # Grad-CAM overlay — XAI toggle only
+    clean_image:        Optional[str]   # Original image — default display
     processing_time_ms: int
     iqa_passed:         bool
     iqa_feedback:       str
@@ -171,7 +172,8 @@ async def predict_hemoglobin(
             severity=result.severity,
             confidence=result.confidence,
             processing_time_ms=result.processing_time_ms,
-            gradcam_image=result.gradcam_image,
+            gradcam_image=result.gradcam_image,   # overlay only
+            captured_image=result.clean_image,     # original clean image
             patient_age=payload.age,
             patient_sex=payload.sex,
             patient_pregnant=payload.pregnancy_status,
@@ -196,7 +198,8 @@ async def predict_hemoglobin(
         hb=result.hb,
         severity=result.severity,
         confidence=result.confidence,
-        gradcam_image=result.gradcam_image,
+        gradcam_image=result.gradcam_image,   # Grad-CAM overlay (XAI toggle)
+        clean_image=result.clean_image,     # Original image (default view)
         processing_time_ms=result.processing_time_ms,
         iqa_passed=result.iqa_passed,
         iqa_feedback=result.iqa_feedback,

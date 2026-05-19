@@ -10,11 +10,21 @@ const STEPS = [
     { id: 6, label: "Report", shortLabel: "Report" },
 ];
 
+/* Each step has its own brand colour */
+const STEP_COLORS = [
+    "#2563EB",
+    "#7C3AED",
+    "#0D9488",
+    "#E11D48",
+    "#D97706",
+    "#16A34A",
+];
+
 /**
  * StepIndicator
  * @param {number}   currentStep  - Active step (1-based)
  * @param {function} onStepClick  - Optional — called with step id when a completed step is clicked
- * @param {boolean}  compact      - Show only icons (no labels), for tight layouts
+ * @param {boolean}  compact      - Show only circles (no labels)
  */
 export default function StepIndicator({
     currentStep = 1,
@@ -22,62 +32,68 @@ export default function StepIndicator({
     compact = false,
 }) {
     return (
-        <div className="w-full" aria-label="Progress">
+        <div className="w-full">
             <ol className="flex items-center justify-between">
                 {STEPS.map((step, idx) => {
                     const isDone = step.id < currentStep;
                     const isActive = step.id === currentStep;
+                    const color = STEP_COLORS[idx];
                     const canClick = isDone && typeof onStepClick === "function";
 
                     return (
                         <li key={step.id} className="flex items-center flex-1">
-                            {/* ── Step circle ──────────────────────────── */}
+                            {/* Step circle */}
                             <div className="flex flex-col items-center gap-1.5">
                                 <button
                                     type="button"
                                     disabled={!canClick}
                                     onClick={() => canClick && onStepClick(step.id)}
                                     aria-current={isActive ? "step" : undefined}
-                                    className={`
-                    flex items-center justify-center w-8 h-8 rounded-full
-                    border-2 text-xs font-bold transition-all duration-200
-                    ${isDone
-                                            ? "bg-green-600 border-green-500 text-white shadow-lg shadow-green-900/40 cursor-pointer hover:bg-green-500"
+                                    className="flex items-center justify-center w-8 h-8 rounded-full border-2 text-xs font-bold transition-all duration-200"
+                                    style={{
+                                        background: isDone
+                                            ? "#16A34A"
                                             : isActive
-                                                ? "bg-clinical-600 border-clinical-400 text-white shadow-lg shadow-clinical-900/50 ring-4 ring-clinical-900/40"
-                                                : "bg-slate-800 border-slate-700 text-slate-500 cursor-default"
-                                        }
-                  `}
+                                                ? color
+                                                : "#F1F5F9",
+                                        borderColor: isDone
+                                            ? "#15803D"
+                                            : isActive
+                                                ? color
+                                                : "#E2E8F0",
+                                        color: isDone || isActive ? "#fff" : "#94A3B8",
+                                        boxShadow: isActive ? `0 0 0 4px ${color}20` : "none",
+                                        cursor: canClick ? "pointer" : "default",
+                                    }}
                                 >
                                     {isDone ? <Check size={14} strokeWidth={3} /> : step.id}
                                 </button>
 
-                                {/* Label (hidden in compact mode) */}
+                                {/* Label */}
                                 {!compact && (
                                     <span
-                                        className={`text-[10px] font-medium leading-none hidden sm:block
-                                ${isActive
-                                                ? "text-clinical-300"
-                                                : isDone
-                                                    ? "text-green-500"
-                                                    : "text-slate-600"
-                                            }`}
+                                        className="text-[10px] font-semibold hidden sm:block"
+                                        style={{
+                                            color: isDone ? "#16A34A" : isActive ? color : "#94A3B8",
+                                        }}
                                     >
                                         {step.shortLabel}
                                     </span>
                                 )}
                             </div>
 
-                            {/* ── Connector line (not after last step) ── */}
+                            {/* Connector line */}
                             {idx < STEPS.length - 1 && (
                                 <div
-                                    className={`flex-1 h-0.5 mx-2 rounded-full transition-all duration-300
-                              ${step.id < currentStep
-                                            ? "bg-green-600"
-                                            : step.id === currentStep
-                                                ? "bg-gradient-to-r from-clinical-600 to-slate-700"
-                                                : "bg-slate-800"
-                                        }`}
+                                    className="flex-1 h-0.5 mx-2 rounded-full transition-all duration-300"
+                                    style={{
+                                        background:
+                                            step.id < currentStep
+                                                ? "#16A34A"
+                                                : step.id === currentStep
+                                                    ? `linear-gradient(to right, ${color}, #E2E8F0)`
+                                                    : "#E2E8F0",
+                                    }}
                                 />
                             )}
                         </li>
@@ -85,15 +101,22 @@ export default function StepIndicator({
                 })}
             </ol>
 
-            {/* ── Current step description ─────────────────────── */}
-            <div className="mt-4 text-center">
-                <p className="text-xs text-slate-500">
+            {/* Current step label */}
+            <div className="mt-3 text-center">
+                <p className="text-xs" style={{ color: "#64748B" }}>
                     Step{" "}
-                    <span className="text-clinical-400 font-semibold">{currentStep}</span>{" "}
+                    <span
+                        className="font-bold"
+                        style={{ color: STEP_COLORS[currentStep - 1] }}
+                    >
+                        {currentStep}
+                    </span>{" "}
                     of{" "}
-                    <span className="text-slate-400 font-semibold">{STEPS.length}</span>
+                    <span className="font-semibold" style={{ color: "#334155" }}>
+                        {STEPS.length}
+                    </span>
                     {" — "}
-                    <span className="text-slate-300 font-medium">
+                    <span className="font-semibold" style={{ color: "#0F172A" }}>
                         {STEPS.find((s) => s.id === currentStep)?.label}
                     </span>
                 </p>
@@ -102,20 +125,28 @@ export default function StepIndicator({
     );
 }
 
-/* ── Mini variant (just the pill row, no labels) ─────── */
+/* Mini pill variant */
 export function MiniStepIndicator({ currentStep = 1 }) {
     return (
         <div className="flex items-center gap-1.5">
-            {STEPS.map((step) => (
+            {STEPS.map((step, idx) => (
                 <div
                     key={step.id}
-                    className={`h-1.5 rounded-full transition-all duration-300
-            ${step.id < currentStep
-                            ? "w-5 bg-green-500"
-                            : step.id === currentStep
-                                ? "w-8 bg-clinical-500"
-                                : "w-3 bg-slate-700"
-                        }`}
+                    className="h-1.5 rounded-full transition-all duration-300"
+                    style={{
+                        width:
+                            step.id < currentStep
+                                ? "1.25rem"
+                                : step.id === currentStep
+                                    ? "2rem"
+                                    : "0.75rem",
+                        background:
+                            step.id < currentStep
+                                ? "#16A34A"
+                                : step.id === currentStep
+                                    ? STEP_COLORS[idx]
+                                    : "#E2E8F0",
+                    }}
                 />
             ))}
         </div>
