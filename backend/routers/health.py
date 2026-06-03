@@ -31,7 +31,7 @@ async def health_check():
     return {
         "status":    "ok",
         "timestamp": time.time(),
-        "service":   "Anemia AI Tracker API",
+        "service":   "Anemia Tracker API",
     }
 
 

@@ -29,7 +29,7 @@ RUN python -m venv /opt/venv \
 # ════════════════════════════════════════════════════════
 FROM python:3.11-slim AS runtime
 
-LABEL maintainer="Anemia AI Tracker"
+LABEL maintainer="Anemia Tracker"
 LABEL description="FastAPI backend — Hb regression CNN + Grad-CAM"
 
 # Runtime system libs (OpenCV, Pillow)

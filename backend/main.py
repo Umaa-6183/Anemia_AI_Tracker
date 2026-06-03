@@ -67,7 +67,7 @@ async def lifespan(app: FastAPI):
     Shutdown:
       - Log clean exit
     """
-    logger.info("━━━ Anemia AI Tracker API starting up ━━━")
+    logger.info("━━━ Anemia Tracker API starting up ━━━")
 
     # 1. Database
     try:
@@ -113,7 +113,7 @@ async def lifespan(app: FastAPI):
     yield   # ← application runs here
 
     # Shutdown
-    logger.info("━━━ Anemia AI Tracker API shutting down ━━━")
+    logger.info("━━━ Anemia Tracker API shutting down ━━━")
 
 
 # ═══════════════════════════════════════════════════════
@@ -124,7 +124,7 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     description=(
-        "Backend API for the Anemia AI Tracker — "
+        "Backend API for the Anemia Tracker — "
         "conjunctival image Hb estimation via CNN with Grad-CAM XAI."
     ),
     docs_url="/docs",

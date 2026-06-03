@@ -17,7 +17,9 @@ import StepIndicator, { MiniStepIndicator } from "../components/StepIndicator";
 import Dashboard from "../components/Dashboard";
 import HbChart from "../components/HbChart";
 import SymptomChecker from "../components/SymptomChecker";
+/*
 import LabSync from "../components/LabSync";
+*/
 import RemediesEngine from "../components/RemediesEngine";
 import PDFReport from "../components/PDFReport";
 
@@ -43,16 +45,18 @@ const TABS = [
         bg: "#FFF1F2",
         border: "#FECDD3",
     },
-    {
-        id: "labs",
-        label: "Lab Sync",
-        shortLabel: "Labs",
-        Icon: FlaskConical,
-        step: 5,
-        color: "#0D9488",
-        bg: "#F0FDFA",
-        border: "#99F6E4",
-    },
+    /*
+      {
+          id: "labs",
+          label: "Lab Sync",
+          shortLabel: "Labs",
+          Icon: FlaskConical,
+          step: 5,
+          color: "#0D9488",
+          bg: "#F0FDFA",
+          border: "#99F6E4",
+      },
+      */
     {
         id: "chart",
         label: "Hb Trend",
@@ -262,7 +266,7 @@ export default function Results() {
                         </div>
                     )}
                     {activeTab === "symptoms" && <SymptomChecker />}
-                    {activeTab === "labs" && <LabSync />}
+                    {/* {activeTab === "labs" && <LabSync />} */}
                     {activeTab === "chart" && <HbChart />}
                     {activeTab === "remedies" && <RemediesEngine />}
                     {activeTab === "report" && <PDFReport />}

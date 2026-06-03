@@ -62,7 +62,7 @@ export default function Header() {
                             className="text-sm font-800 font-extrabold tracking-tight"
                             style={{ color: "#0F172A" }}
                         >
-                            Anemia AI
+                            Anemia
                         </p>
                         <p
                             className="text-[10px] font-semibold tracking-widest uppercase"

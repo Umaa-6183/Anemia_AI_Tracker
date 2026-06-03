@@ -10,7 +10,7 @@ const BASE_URL = process.env.REACT_APP_API_URL || "";
 
 const client = axios.create({
     baseURL: BASE_URL,
-    timeout: 60 _000, // 60 s — model inference can take a moment
+    timeout: 60000, // 60 s — model inference can take a moment
     headers: {
         "Content-Type": "application/json"
     },
@@ -28,10 +28,10 @@ client.interceptors.response.use(
     (res) => res,
     (err) => {
         const message =
-            err.response ? .data ? .detail ||
-                err.response ? .data ? .message ||
-                    err.message ||
-                    "An unexpected error occurred";
+            err?.response?.data?.detail ||
+            err?.response?.data?.message ||
+            err?.message ||
+            "An unexpected error occurred";
         return Promise.reject(new Error(message));
     }
 );

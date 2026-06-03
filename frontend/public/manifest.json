@@ -1,0 +1,19 @@
+{
+    "short_name": "Anemia Tracker",
+    "name": "Anemia AI Tracker - Non-invasive Haemoglobin Screening",
+    "description": "AI-powered non-invasive haemoglobin estimation from conjunctival imaging. Screen for anemia in under 60 seconds.",
+    "icons": [{
+        "src": "favicon.ico",
+        "sizes": "64x64 32x32 24x24 16x16",
+        "type": "image/x-icon"
+    }],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#082849",
+    "background_color": "#020617",
+    "orientation": "portrait",
+    "scope": "/",
+    "categories": ["health", "medical", "utilities"],
+    "lang": "en-US",
+    "dir": "ltr"
+}

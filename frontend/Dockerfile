@@ -19,7 +19,7 @@ RUN npm run build
 # ════════════════════════════════════════════════════════
 FROM nginx:1.25-alpine AS runtime
 
-LABEL description="Anemia AI Tracker — React frontend"
+LABEL description="Anemia Tracker — React frontend"
 
 # Copy CRA production build
 COPY --from=builder /app/build /usr/share/nginx/html

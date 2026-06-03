@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     )
 
     # ── App meta ─────────────────────────────────────
-    app_name:    str = "Anemia AI Tracker API"
+    app_name:    str = "Anemia Tracker API"
     app_version: str = "1.0.0"
     debug:       bool = Field(
         default=False, description="Enable debug mode / hot-reload")

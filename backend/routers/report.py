@@ -137,7 +137,7 @@ def _build_page_template(canvas, doc):
 
     canvas.setFillColor(WHITE)
     canvas.setFont("Helvetica-Bold", 13)
-    canvas.drawString(MARGIN, PAGE_H - 13*mm, "ANEMIA AI TRACKER")
+    canvas.drawString(MARGIN, PAGE_H - 13*mm, "ANEMIA TRACKER")
 
     canvas.setFont("Helvetica", 7)
     canvas.drawString(MARGIN, PAGE_H - 17*mm,
@@ -438,7 +438,7 @@ def _build_pdf(req: ReportRequest) -> bytes:
     else:
         story.append(Paragraph(
             f"Severity: <b>{s.severity_label}</b>. "
-            "Please refer to the Remedies section in the Anemia AI Tracker app for full dietary and lifestyle recommendations.",
+            "Please refer to the Remedies section in the Anemia Tracker app for full dietary and lifestyle recommendations.",
             BODY_STYLE,
         ))
 

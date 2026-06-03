@@ -17,12 +17,12 @@ import {
 } from "lucide-react";
 import { estimateBlurScore, resizeBase64Image } from "../utils/helpers";
 
-const SCAN_TIME_LIMIT_MS = 120_000;
+const SCAN_TIME_LIMIT_MS = 300_000; // 5 minutes for users to position eye
 const IQA_INTERVAL_MS = 350;
 const BLUR_THRESHOLD = 80;
 const BRIGHTNESS_LOW = 40;
 const BRIGHTNESS_HIGH = 220;
-const CAPTURE_HOLD_MS = 800;
+const AUTO_CAPTURE_ENABLED = false; // Disabled - manual capture only
 
 async function measureBrightness(dataUrl) {
     return new Promise((resolve) => {
@@ -84,7 +84,7 @@ export default function CameraCapture({ onCapture, disabled = false }) {
     const [camError, setCamError] = useState(null);
     const [feedback, setFeedback] = useState({
         ok: false,
-        message: "Pull lower eyelid down and centre it in the oval",
+        message: "Click 'Start Scanning' to begin",
         color: "#64748B",
     });
     const [captured, setCaptured] = useState(false);
@@ -95,6 +95,7 @@ export default function CameraCapture({ onCapture, disabled = false }) {
     const [timeExpired, setTimeExpired] = useState(false);
     const [uploadPreview, setUploadPreview] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
+    const [scanningStarted, setScanningStarted] = useState(false);
 
     useEffect(
         () => () => {
@@ -105,11 +106,11 @@ export default function CameraCapture({ onCapture, disabled = false }) {
     );
 
     useEffect(() => {
-        if (ready && !captured && !disabled && mode === "live") {
+        if (ready && !captured && !disabled && mode === "live" && scanningStarted) {
             setTimerActive(true);
             setTimeLeft(SCAN_TIME_LIMIT_MS);
         }
-    }, [ready, captured, disabled, mode]);
+    }, [ready, captured, disabled, mode, scanningStarted]);
 
     useEffect(() => {
         if (!timerActive || captured || disabled) {
@@ -144,20 +145,15 @@ export default function CameraCapture({ onCapture, disabled = false }) {
         ]);
         const fb = buildFeedback(blurScore, brightness);
         setFeedback(fb);
-        if (fb.ok) {
-            if (!passStartRef.current) passStartRef.current = Date.now();
-            if (Date.now() - passStartRef.current >= CAPTURE_HOLD_MS)
-                await doCapture();
-        } else {
-            passStartRef.current = null;
-        }
+        // Auto-capture disabled - only show feedback, no automatic capture
+        passStartRef.current = null;
     }, [captured, disabled, timeExpired]); // eslint-disable-line
 
     useEffect(() => {
-        if (!ready || captured || disabled || mode !== "live") return;
+        if (!ready || captured || disabled || mode !== "live" || !scanningStarted) return;
         iqaTimerRef.current = setInterval(runIQA, IQA_INTERVAL_MS);
         return () => clearInterval(iqaTimerRef.current);
-    }, [ready, captured, disabled, runIQA, mode]);
+    }, [ready, captured, disabled, runIQA, mode, scanningStarted]);
 
     const doCapture = useCallback(async () => {
         if (!webcamRef.current || captured) return;
@@ -198,6 +194,16 @@ export default function CameraCapture({ onCapture, disabled = false }) {
         setTimeExpired(false);
         setTimeLeft(SCAN_TIME_LIMIT_MS);
         passStartRef.current = null;
+        setScanningStarted(false);
+        setFeedback({
+            ok: false,
+            message: "Click 'Start Scanning' to begin",
+            color: "#64748B",
+        });
+    }
+
+    function handleStartScanning() {
+        setScanningStarted(true);
         setFeedback({
             ok: false,
             message: "Pull lower eyelid down and centre it in the oval",
@@ -246,6 +252,7 @@ export default function CameraCapture({ onCapture, disabled = false }) {
     function handleUploadRetake() {
         setUploadPreview(null);
         setCaptured(false);
+        setScanningStarted(false);
         setFeedback({
             ok: false,
             message: "Upload a new conjunctival image",
@@ -416,10 +423,10 @@ export default function CameraCapture({ onCapture, disabled = false }) {
                                 <div className="text-center space-y-3 p-6">
                                     <Clock size={32} className="text-amber-400 mx-auto" />
                                     <p className="text-sm font-semibold text-white">
-                                        2-Minute Window Ended
+                                        5-Minute Window Ended
                                     </p>
                                     <p className="text-xs max-w-xs" style={{ color: "#94A3B8" }}>
-                                        Capture manually or retake for a fresh 2-minute window.
+                                        Click Submit or restart for a fresh 5-minute window.
                                     </p>
                                 </div>
                             </div>
@@ -434,7 +441,7 @@ export default function CameraCapture({ onCapture, disabled = false }) {
                             </div>
                         )}
 
-                        {ready && !captured && !timeExpired && (
+                        {ready && !captured && !timeExpired && scanningStarted && (
                             <div className="absolute top-3 left-3 z-10">
                                 <div
                                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
@@ -474,7 +481,7 @@ export default function CameraCapture({ onCapture, disabled = false }) {
                         )}
                     </div>
 
-                    {!captured && (
+                    {!captured && scanningStarted && (
                         <div
                             className="flex items-center gap-3 px-4 py-3 rounded-xl"
                             style={{
@@ -496,28 +503,34 @@ export default function CameraCapture({ onCapture, disabled = false }) {
                         </div>
                     )}
 
-                    {!captured && ready && (
+                    {!captured && ready && !scanningStarted && (
                         <button
-                            onClick={handleManualCapture}
+                            onClick={handleStartScanning}
                             disabled={disabled}
-                            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all"
+                            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-base transition-all shadow-lg hover:shadow-xl"
                             style={{
-                                background: "#334155",
+                                background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
                                 color: "#fff",
-                                border: "none",
+                                border: "2px solid rgba(255, 255, 255, 0.2)",
                                 cursor: disabled ? "not-allowed" : "pointer",
                             }}
                         >
-                            <Camera size={16} /> Capture Now (Manual)
+                            <Camera size={18} /> Start Scanning
                         </button>
                     )}
-                    {timeExpired && !captured && (
+                    {!captured && ready && scanningStarted && (
                         <button
                             onClick={handleManualCapture}
                             disabled={disabled}
-                            className="btn-primary w-full py-3.5"
+                            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-base transition-all shadow-lg hover:shadow-xl"
+                            style={{
+                                background: "linear-gradient(135deg, #0E8EE7 0%, #0C7DD1 100%)",
+                                color: "#fff",
+                                border: "2px solid rgba(255, 255, 255, 0.2)",
+                                cursor: disabled ? "not-allowed" : "pointer",
+                            }}
                         >
-                            <Camera size={17} /> Capture Anyway
+                            <CheckCircle2 size={18} /> Submit for AI Analysis
                         </button>
                     )}
                     {captured && !disabled && (
@@ -542,12 +555,12 @@ export default function CameraCapture({ onCapture, disabled = false }) {
                                 position your eyelid
                             </p>
                             {[
+                                "Click 'Start Scanning' button below to begin",
                                 "With a clean finger, gently pull your lower eyelid downward",
                                 "The pink inner lining (conjunctiva) should be clearly visible",
                                 "Centre the pink area inside the oval guide on screen",
                                 "Ensure bright, even lighting — avoid shadows across the eye",
-                                "The camera fires automatically when the frame is sharp and well-lit",
-                                "Or press 'Capture Now' whenever you are ready",
+                                "When ready, click 'Submit for AI Analysis' to proceed",
                             ].map((tip, i) => (
                                 <p
                                     key={i}

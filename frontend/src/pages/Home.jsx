@@ -188,7 +188,7 @@ export default function Home() {
                         className="max-w-2xl mx-auto text-base md:text-lg leading-relaxed"
                         style={{ color: "#475569" }}
                     >
-                        Anemia AI Tracker estimates your Haemoglobin level by analysing a
+                        Anemia Tracker estimates your Haemoglobin level by analysing a
                         photo of your conjunctiva (inner lower eyelid). No needles, no lab
                         visit — take 2 minutes to scan, get AI results in under 60 seconds.
                     </p>
@@ -353,16 +353,16 @@ export default function Home() {
                             color: "#D97706",
                             bg: "#FFFBEB",
                         },
-                        {
+                        /*{
                             n: 5,
                             title: "Symptom & Lab Sync",
                             desc: "Check your symptoms and optionally enter recent blood-work (RBC, WBC, Ferritin) for a complete holistic report.",
                             color: "#E11D48",
                             bg: "#FFF1F2",
-                        },
+                        },*/
                         {
-                            n: 6,
-                            title: "Clinical PDF Report",
+                            n: 5,
+                            title: "Summary PDF Report",
                             desc: "Download a hospital-grade PDF with all findings, heatmap, lab table, remedies, and a strict clinical disclaimer.",
                             color: "#16A34A",
                             bg: "#F0FDF4",
@@ -566,7 +566,7 @@ export default function Home() {
                     replace phlebotomy or professional medical diagnosis.
                 </p>
                 <p className="text-xs mt-2" style={{ color: "#94A3B8" }}>
-                    Anemia AI Tracker · Final Year Project · {new Date().getFullYear()}
+                    Anemia Tracker · Final Year Project · {new Date().getFullYear()}
                 </p>
             </footer>
         </div>

@@ -33,13 +33,13 @@ function validate(form) {
 function Field({ label, error, icon: Icon, children, hint }) {
     return (
         <div>
-            <label className="label flex items-center gap-1.5">
-                {Icon && <Icon size={13} className="text-gray-500" />}
+            <label className="label flex items-center gap-1.5 text-gray-900">
+                {Icon && <Icon size={13} className="text-gray-700" />}
                 {label}
             </label>
             {children}
             {hint && !error && (
-                <p className="mt-1 text-xs text-slate-600 flex items-center gap-1">
+                <p className="mt-1 text-xs text-gray-700 flex items-center gap-1">
                     <Info size={10} />
                     {hint}
                 </p>
@@ -59,23 +59,23 @@ function SexButton({ value, selected, onClick, icon, label, description }) {
             onClick={() => onClick(value)}
             className={`relative flex-1 p-4 rounded-xl border-2 text-left transition-all duration-150
                   ${selected
-                    ? "bg-clinical-900/50 border-clinical-500 shadow-lg shadow-clinical-900/30"
+                    ? "bg-clinical-100 border-clinical-500 shadow-lg shadow-clinical-500/30"
                     : "bg-gray-100 border-gray-300 hover:border-gray-400"
                 }`}
         >
             {selected && (
                 <CheckCircle2
                     size={16}
-                    className="absolute top-3 right-3 text-clinical-400"
+                    className="absolute top-3 right-3 text-clinical-600"
                 />
             )}
             <span className="text-2xl block mb-1">{icon}</span>
             <p
-                className={`text-sm font-semibold ${selected ? "text-clinical-200" : "text-gray-700"}`}
+                className={`text-sm font-semibold ${selected ? "text-clinical-900" : "text-gray-700"}`}
             >
                 {label}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5 leading-snug">{description}</p>
+            <p className={`text-xs mt-0.5 leading-snug ${selected ? "text-clinical-700" : "text-gray-500"}`}>{description}</p>
         </button>
     );
 }
@@ -188,17 +188,17 @@ export default function Profile() {
                                     <User size={22} className="text-white" />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-bold text-white">
+                                    <h2 className="text-lg font-bold text-gray-900">
                                         {state.profile.name}
                                     </h2>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-gray-700">
                                         Profile · Created{" "}
                                         {new Date(state.profile.createdAt).toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>
                             <span
-                                className="flex items-center gap-1.5 bg-green-900/40 text-green-400
+                                className="flex items-center gap-1.5 bg-green-300 text-green-900
                                border border-green-800 text-xs font-semibold px-2.5 py-1 rounded-full"
                             >
                                 <CheckCircle2 size={11} />
@@ -235,10 +235,10 @@ export default function Profile() {
                                     className="bg-gray-100 rounded-xl p-3 border border-gray-300"
                                 >
                                     <div className="flex items-center gap-1.5 mb-1">
-                                        <Icon size={11} className="text-gray-500" />
-                                        <p className="text-xs text-gray-500 font-medium">{label}</p>
+                                        <Icon size={11} className="text-gray-600" />
+                                        <p className="text-xs text-gray-700 font-medium">{label}</p>
                                     </div>
-                                    <p className="text-sm font-semibold text-white capitalize">
+                                    <p className="text-sm font-semibold text-gray-900 capitalize">
                                         {value}
                                     </p>
                                 </div>
@@ -275,9 +275,9 @@ export default function Profile() {
                     </button>
 
                     {/* Clinical note */}
-                    <div className="flex gap-2.5 bg-amber-900/20 border border-amber-800/50 rounded-xl p-3">
+                    <div className="flex gap-2.5 bg-clinical-100 border border-amber-800/50 rounded-xl p-3">
                         <Info size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-xs text-amber-300/80 leading-relaxed">
+                        <p className="text-xs text-amber-700 leading-relaxed">
                             Your age, sex, and pregnancy status are passed directly into the
                             AI model's dense layers to apply WHO-calibrated Hb thresholds.
                             Keeping them accurate ensures a clinically meaningful result.
@@ -296,10 +296,10 @@ export default function Profile() {
             <div className="mt-8">
                 {/* Page header */}
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-white">
+                    <h1 className="text-2xl font-bold text-gray-900">
                         {hasProfile ? "Edit Your Profile" : "Patient Profile"}
                     </h1>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-700 mt-1">
                         {hasProfile
                             ? "Update your details below. Changes apply to all future scans."
                             : "Enter your details once. They personalise every Haemoglobin estimate."}
@@ -455,7 +455,7 @@ export default function Profile() {
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="text-xs text-slate-600 text-center leading-relaxed">
+                    <p className="text-xs text-gray-700 text-center leading-relaxed">
                         All data is stored locally on your device. Nothing is uploaded to
                         any server except during the active scan for AI inference.
                     </p>

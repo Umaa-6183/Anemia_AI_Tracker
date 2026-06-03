@@ -50,16 +50,15 @@ function HistoryCard({ entry, index, onDelete }) {
     return (
         <div
             className={`group flex items-center gap-4 px-4 py-3.5 rounded-xl border
-                      transition-all duration-150
-                      ${severityInfo.borderColor} ${severityInfo.bgColor}
-                      hover:brightness-110`}
+                      transition-all duration-150 bg-clinical-50 border-blue-200
+                      hover:bg-blue-100`}
         >
             {/* Index badge */}
             <div
                 className="flex-shrink-0 w-7 h-7 bg-gray-100 rounded-full
                        flex items-center justify-center border border-gray-300"
             >
-                <span className="text-[10px] font-bold text-gray-500">{index + 1}</span>
+                <span className="text-[10px] font-bold text-gray-700">{index + 1}</span>
             </div>
 
             {/* Hb value */}
@@ -69,7 +68,7 @@ function HistoryCard({ entry, index, onDelete }) {
                 >
                     {Number(entry.hb).toFixed(1)}
                 </p>
-                <p className="text-[10px] text-slate-600 -mt-0.5">g/dL</p>
+                <p className="text-[10px] text-gray-700 -mt-0.5">g/dL</p>
             </div>
 
             {/* Severity badge */}
@@ -82,7 +81,7 @@ function HistoryCard({ entry, index, onDelete }) {
 
             {/* Date */}
             <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 font-medium">
+                <p className="text-xs text-gray-700 font-medium">
                     {formatDateTime(entry.date)}
                 </p>
             </div>
@@ -91,7 +90,7 @@ function HistoryCard({ entry, index, onDelete }) {
             <button
                 onClick={() => onDelete(index)}
                 className="opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center
-                   justify-center text-slate-600 hover:text-red-400
+                   justify-center text-gray-700 hover:text-red-400
                    hover:bg-red-900/20 rounded-lg transition-all duration-150"
                 title="Delete entry"
             >
@@ -107,8 +106,8 @@ function SummaryCard({ label, value, sub, Icon, color }) {
         <div className="card text-center space-y-1.5">
             <Icon size={18} className={`${color} mx-auto`} />
             <p className={`text-2xl font-extrabold font-mono ${color}`}>{value}</p>
-            <p className="text-xs text-gray-500 font-medium">{label}</p>
-            {sub && <p className="text-[10px] text-gray-400">{sub}</p>}
+            <p className="text-xs text-gray-800 font-medium">{label}</p>
+            {sub && <p className="text-[10px] text-gray-700">{sub}</p>}
         </div>
     );
 }
@@ -167,11 +166,11 @@ export default function HistoryPage() {
             {/* ── Page header ─────────────────────────── */}
             <div className="bg-gray-50 border-b border-gray-200">
                 <div className="max-w-4xl mx-auto px-4 pt-8 pb-5">
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-                        <History size={22} className="text-clinical-400" />
+                    <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2.5">
+                        <History size={22} className="text-clinical-600" />
                         Scan History
                     </h1>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-700 mt-1">
                         {history.length
                             ? `${history.length} scan${history.length !== 1 ? "s" : ""} recorded${profile ? ` for ${profile.name}` : ""
                             }`
@@ -186,8 +185,8 @@ export default function HistoryPage() {
                     <div className="card text-center py-16 space-y-4">
                         <BarChart2 size={40} className="text-gray-400 mx-auto" />
                         <div>
-                            <p className="text-gray-700 font-semibold">No Scan History</p>
-                            <p className="text-gray-500 text-sm mt-1 max-w-xs mx-auto">
+                            <p className="text-gray-900 font-semibold">No Scan History</p>
+                            <p className="text-gray-700 text-sm mt-1 max-w-xs mx-auto">
                                 Complete your first scan to start tracking your Haemoglobin over
                                 time.
                             </p>
@@ -265,8 +264,8 @@ export default function HistoryPage() {
                                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs
                                    font-semibold border transition-all duration-150
                                    ${filterSeverity === key
-                                                    ? "bg-gray-200 border-gray-400 text-white"
-                                                    : "bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400"
+                                                    ? "bg-gray-200 border-gray-400 text-gray-900"
+                                                    : "bg-gray-50 border-gray-300 text-gray-700 hover:border-gray-400"
                                                 }`}
                                         >
                                             <Filter
@@ -275,7 +274,7 @@ export default function HistoryPage() {
                                             />
                                             {label}
                                             <span
-                                                className={`text-[10px] ${filterSeverity === key ? color : "text-slate-600"}`}
+                                                className={`text-[10px] ${filterSeverity === key ? color : "text-gray-700"}`}
                                             >
                                                 ({count})
                                             </span>
@@ -287,13 +286,13 @@ export default function HistoryPage() {
 
                         {/* ── Chart toggle ── */}
                         <div className="flex items-center justify-between">
-                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                                <TrendingUp size={17} className="text-clinical-400" />
+                            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <TrendingUp size={17} className="text-clinical-600" />
                                 Hb Trend Chart
                             </h2>
                             <button
                                 onClick={() => setShowChart((v) => !v)}
-                                className="text-xs text-gray-500 hover:text-gray-700
+                                className="text-xs text-gray-700 hover:text-gray-900
                            flex items-center gap-1 transition-colors"
                             >
                                 {showChart ? "Hide" : "Show"}
@@ -309,11 +308,11 @@ export default function HistoryPage() {
                         {/* ── Scan log ── */}
                         <div>
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                                    <History size={17} className="text-clinical-400" />
+                                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                    <History size={17} className="text-clinical-600" />
                                     All Scans
                                     {filterSeverity !== "all" && (
-                                        <span className="text-xs text-gray-500 font-normal ml-1">
+                                        <span className="text-xs text-gray-700 font-normal ml-1">
                                             — filtered: {filterSeverity}
                                         </span>
                                     )}
@@ -322,7 +321,7 @@ export default function HistoryPage() {
                                 {history.length > 0 && (
                                     <button
                                         onClick={handleClearAll}
-                                        className="text-xs text-slate-600 hover:text-red-400
+                                        className="text-xs text-gray-700 hover:text-red-400
                                flex items-center gap-1 transition-colors"
                                     >
                                         <Trash2 size={12} />
@@ -333,12 +332,12 @@ export default function HistoryPage() {
 
                             {filtered.length === 0 ? (
                                 <div className="card text-center py-8">
-                                    <p className="text-gray-500 text-sm">
+                                    <p className="text-gray-700 text-sm">
                                         No scans match the "{filterSeverity}" filter.
                                     </p>
                                     <button
                                         onClick={() => setFilter("all")}
-                                        className="mt-3 text-xs text-clinical-400 hover:underline"
+                                        className="mt-3 text-xs text-clinical-600 hover:underline"
                                     >
                                         Show all scans
                                     </button>

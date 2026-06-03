@@ -112,7 +112,7 @@ function buildPDF(state) {
     setFont(doc, "bold");
     setTextC(doc, C.white);
     doc.setFontSize(16);
-    doc.text("ANEMIA AI TRACKER", ml, 11);
+    doc.text("ANEMIA TRACKER", ml, 11);
     setFont(doc, "normal");
     doc.setFontSize(8);
     doc.text("AI-Assisted Haemoglobin Screening Report", ml, 17);
@@ -214,23 +214,20 @@ function buildPDF(state) {
             const lgX = ml + 85;
             setFont(doc, "bold");
             setTextC(doc, C.navy);
-            doc.setFontSize(7.5);
-            doc.text("Heatmap Legend", lgX, y + 10);
-            setFont(doc, "normal");
-            setTextC(doc, C.darkGray);
-            doc.setFontSize(7);
+            doc.setFontSize(8);
+            doc.text("Image Details", lgX, y + 10);
             setFont(doc, "normal");
             setTextC(doc, C.darkGray);
             doc.setFontSize(7.5);
             doc.text(
                 "Mode: " + (origImage ? "Original scan" : "Processed image"),
                 lgX,
-                y + 10,
+                y + 16,
             );
             doc.text(
                 "Source: " + (origImage ? "Live camera / upload" : "Model output"),
                 lgX,
-                y + 16,
+                y + 22,
             );
             setFont(doc, "italic");
             setTextC(doc, C.midGray);
@@ -239,7 +236,7 @@ function buildPDF(state) {
                 doc,
                 "This is the original conjunctival image captured during the scan. The AI analysed the pallor and vascularity of the inner lower eyelid to estimate the Haemoglobin level.",
                 lgX,
-                y + 24,
+                y + 30,
                 97,
                 4.5,
             );

@@ -19,7 +19,12 @@ function RequireProfile({ children }) {
 export default function App() {
     return (
         <AppProvider>
-            <BrowserRouter>
+            <BrowserRouter
+                future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true,
+                }}
+            >
                 {/* Global toast notifications */}
                 <Toaster
                     position="top-right"

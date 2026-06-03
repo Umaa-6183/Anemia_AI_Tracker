@@ -28,14 +28,15 @@ const PHASE = {
 };
 
 /* ── Processing step labels ─────────────────────────── */
+// Total duration = exactly 60 seconds (60000ms)
 const PROCESSING_STEPS = [
-    { id: 1, label: "Sending image to server", duration: 800 },
-    { id: 2, label: "Running Image Quality Assessment", duration: 600 },
-    { id: 3, label: "White-balance calibration", duration: 700 },
-    { id: 4, label: "CNN forward pass", duration: 2000 },
-    { id: 5, label: "Applying demographic weights", duration: 500 },
-    { id: 6, label: "Generating Grad-CAM heatmap", duration: 900 },
-    { id: 7, label: "Classifying severity tier", duration: 400 },
+    { id: 1, label: "Sending image to server", duration: 5000 },
+    { id: 2, label: "Running Image Quality Assessment", duration: 8000 },
+    { id: 3, label: "White-balance calibration", duration: 7000 },
+    { id: 4, label: "CNN forward pass", duration: 15000 },
+    { id: 5, label: "Applying demographic weights", duration: 8000 },
+    { id: 6, label: "Generating Grad-CAM heatmap", duration: 10000 },
+    { id: 7, label: "Classifying severity tier", duration: 7000 },
 ];
 
 /* ── Animated processing step ticker ─────────────────── */
@@ -50,7 +51,7 @@ function ProcessingTimeline({ activeStep }) {
                         key={id}
                         className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300
                          ${active
-                                ? "bg-clinical-900/50 border border-clinical-800"
+                                ? "bg-clinical-100 border border-clinical-800"
                                 : done
                                     ? "bg-green-900/20 border border-green-900/40"
                                     : "bg-gray-50 border border-gray-200 opacity-40"
@@ -76,9 +77,9 @@ function ProcessingTimeline({ activeStep }) {
                         <span
                             className={`text-xs font-medium
                               ${active
-                                    ? "text-clinical-200"
+                                    ? "text-clinical-900"
                                     : done
-                                        ? "text-green-400"
+                                        ? "text-green-700"
                                         : "text-slate-600"
                                 }`}
                         >
@@ -249,13 +250,14 @@ export default function Scan() {
                         </>
                     )}
                     {phase === PHASE.PROCESSING && (
-                        <>
-                            <Brain size={22} className="text-purple-400" /> AI Processing
-                        </>
+                        <div className="flex items-center gap-2 text-purple-600">
+                            <Brain size={22} />
+                            <span>AI Processing</span>
+                        </div>
                     )}
                     {phase === PHASE.DONE && (
                         <>
-                            <CheckCircle2 size={22} className="text-green-400" /> Scan
+                            <CheckCircle2 size={22} className="text-green-500" /> Scan
                             Complete
                         </>
                     )}
@@ -265,9 +267,11 @@ export default function Scan() {
                         </>
                     )}
                 </h1>
-                <p className="text-sm text-gray-500 mt-1">
+                <p
+                    className={`text-sm mt-1 ${phase === PHASE.PROCESSING ? "text-gray-900 font-medium" : "text-gray-500"}`}
+                >
                     {phase === PHASE.CAMERA &&
-                        "Pull your lower eyelid down — the camera fires automatically"}
+                        "Click Start Scanning, position your eye, then Submit when ready"}
                     {phase === PHASE.PROCESSING &&
                         "Running AI inference on your conjunctival image…"}
                     {phase === PHASE.DONE &&
@@ -282,13 +286,13 @@ export default function Scan() {
                 <div className="space-y-5 animate-slide-up">
                     {/* Patient info reminder */}
                     <div
-                        className="flex items-center gap-3 bg-clinical-950/50 border border-clinical-900/60
+                        className="flex items-center gap-3 bg-clinical-100 border border-clinical-900/60
                            rounded-xl px-4 py-3"
                     >
                         <Activity size={15} className="text-clinical-400 flex-shrink-0" />
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-blue-900">
                             Scanning for{" "}
-                            <span className="text-white font-semibold">
+                            <span className="text-darkblue font-bold">
                                 {state.profile?.name}
                             </span>
                             {" · "}
@@ -313,26 +317,26 @@ export default function Scan() {
                     {/* Elapsed timer */}
                     <div className="card flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-purple-900/50 rounded-xl flex items-center justify-center">
-                                <Brain size={20} className="text-purple-400" />
+                            <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <Brain size={20} className="text-purple-700" />
                             </div>
                             <div>
-                                <p className="text-sm font-semibold text-white">
+                                <p className="text-sm font-semibold text-gray-900">
                                     CNN Inference
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-gray-700">
                                     4-layer ConvNet + demographic fusion
                                 </p>
                             </div>
                         </div>
                         <div className="text-right">
-                            <p className="text-2xl font-mono font-bold text-clinical-300">
+                            <p className="text-2xl font-mono font-bold text-clinical-900">
                                 {elapsed.toFixed(1)}
-                                <span className="text-sm text-gray-500 ml-1">s</span>
+                                <span className="text-sm text-gray-700 ml-1">s</span>
                             </p>
                             <div className="flex items-center gap-1 justify-end mt-0.5">
-                                <Clock size={10} className="text-slate-600" />
-                                <span className="text-xs text-slate-600">target &lt; 60s</span>
+                                <Clock size={10} className="text-gray-600" />
+                                <span className="text-xs text-gray-700">target &lt; 60s</span>
                             </div>
                         </div>
                     </div>
@@ -374,12 +378,12 @@ export default function Scan() {
                              flex items-center justify-center mx-auto
                              shadow-lg shadow-green-900/40"
                         >
-                            <CheckCircle2 size={30} className="text-green-400" />
+                            <CheckCircle2 size={30} className="text-green-700" />
                         </div>
                         <div>
-                            <p className="text-4xl font-extrabold text-white font-mono">
+                            <p className="text-4xl font-extrabold text-black font-mono">
                                 {Number(result.hb).toFixed(1)}
-                                <span className="text-lg text-gray-500 ml-1.5">g/dL</span>
+                                <span className="text-lg text-black-500 ml-1.5">g/dL</span>
                             </p>
                             <p
                                 className="text-sm mt-1"
@@ -389,9 +393,9 @@ export default function Scan() {
                             </p>
                         </div>
                         <div className="flex items-center justify-center gap-2">
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-black-500">
                                 Confidence:{" "}
-                                <span className="text-gray-700 font-medium">
+                                <span className="text-black-700 font-medium">
                                     {result.confidence
                                         ? `${Math.round(result.confidence * 100)}%`
                                         : "—"}
